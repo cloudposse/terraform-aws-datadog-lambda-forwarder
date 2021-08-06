@@ -1,4 +1,4 @@
-module github.com/cloudposse/terraform-example-module
+module github.com/cloudposse/terraform-aws-datadog-forwarder
 
 go 1.13
 
