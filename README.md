@@ -260,7 +260,9 @@ Available targets:
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_lambda_forwarder_rds_enhanced_monitoring_arn"></a> [lambda\_forwarder\_rds\_enhanced\_monitoring\_arn](#output\_lambda\_forwarder\_rds\_enhanced\_monitoring\_arn) | Datadog Lambda forwarder for Enhanced RDS Metrics function ARN |
 <!-- markdownlint-restore -->
 
 

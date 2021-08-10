@@ -24,16 +24,16 @@ module "subnets" {
 module "cloudwatch-logs" {
   source  = "cloudposse/cloudwatch-logs/aws"
   version = "0.4.3"
-  name = "/aws/rds/cluster/pg-main/postgresql"
+  name    = "/aws/rds/cluster/pg-main/postgresql"
   context = module.this.context
 }
 
 module "datadog_lambda_forwarder" {
-  source = "../.."
-  region = var.region
+  source                = "../.."
+  region                = var.region
   forwarder_log_enabled = true
   cloudwatch_forwarder_log_groups = {
-      postgres =  module.cloudwatch-logs.log_group_name
+    postgres = module.cloudwatch-logs.log_group_name
   }
 
   context = module.this.context
