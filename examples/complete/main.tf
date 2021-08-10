@@ -28,9 +28,6 @@ module "cloudwatch-logs" {
   context = module.this.context
 }
 
-  context = module.this.context
-}
-
 module "datadog_lambda_forwarder" {
   source = "../.."
   region = var.region
