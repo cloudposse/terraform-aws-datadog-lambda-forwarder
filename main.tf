@@ -7,13 +7,13 @@ data "aws_region" "current" {
 }
 
 locals {
-  aws_account_id      = join("", data.aws_caller_identity.current.*.account_id)
-  aws_region          = join("", data.aws_region.current.*.name)
-  datadog_external_id = join("", datadog_integration_aws.integration.*.external_id)
-  lambda_enabled         = module.this.enabled ? (var.forwarder_log_enabled || var.forwarder_rds_enabled || var.forwarder_vpc_logs_enabled ? true : false) : false
-  dd_api_key_resource    = var.dd_api_key_source.resource
-  dd_api_key_identifier  = var.dd_api_key_source.identifier
-  dd_api_key_arn         = local.dd_api_key_resource == "ssm" ? join("", data.aws_ssm_parameter.api_key.*.arn) : local.dd_api_key_identifier
+  aws_account_id        = join("", data.aws_caller_identity.current.*.account_id)
+  aws_region            = join("", data.aws_region.current.*.name)
+  lambda_enabled        = module.this.enabled
+  dd_api_key_resource   = var.dd_api_key_source.resource
+  dd_api_key_identifier = var.dd_api_key_source.identifier
+  dd_api_key_arn        = local.dd_api_key_resource == "ssm" ? join("", data.aws_ssm_parameter.api_key.*.arn) : local.dd_api_key_identifier
+
   dd_api_key_iam_actions = [lookup({ kms = "kms:Decrypt", asm = "secretsmanager:GetSecretValue", ssm = "ssm:GetParameter" }, local.dd_api_key_resource, "")]
   dd_api_key_kms         = local.dd_api_key_resource == "kms" ? { DD_KMS_API_KEY = var.dd_api_key_kms_ciphertext_blob } : {}
   dd_api_key_asm         = local.dd_api_key_resource == "asm" ? { DD_API_KEY_SECRET_ARN = local.dd_api_key_identifier } : {}

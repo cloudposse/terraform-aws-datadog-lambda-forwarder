@@ -2,7 +2,7 @@
 # https://github.com/DataDog/datadog-serverless-functions/blob/master/aws/vpc_flow_log_monitoring/lambda_function.py
 # This code can only read VPC flog logs send to a cloudwatch group ( not from S3 )
 module "forwarder_vpclogs_label" {
-  count = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
+  count      = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
   source     = "cloudposse/label/null"
   version    = "0.24.1" # requires Terraform >= 0.13.0
   attributes = ["forwarder-vpclogs"]
@@ -71,13 +71,13 @@ resource "aws_lambda_permission" "cloudwatch_vpclogs" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.forwarder_vpclogs[0].function_name
   principal     = "logs.amazonaws.com"
-  source_arn    = "arn:aws:logs:${local.aws_region}:${local.aws_account_id}:log-group:${var.vpc_logs_cloudwatch_group}:*"
+  source_arn    = "arn:aws:logs:${local.aws_region}:${local.aws_account_id}:log-group:${var.vpclogs_cloudwatch_log_group}:*"
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter_vpclogs" {
   count           = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
-  name            = module.forwarder_vpclogs[0].id
-  log_group_name  = var.vpc_logs_cloudwatch_group
+  name            = module.forwarder_vpclogs_label[0].id
+  log_group_name  = var.vpclogs_cloudwatch_log_group
   destination_arn = aws_lambda_function.forwarder_vpclogs[0].arn
   filter_pattern  = ""
 }

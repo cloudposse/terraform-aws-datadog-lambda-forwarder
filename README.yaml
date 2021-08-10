@@ -70,11 +70,40 @@ usage: |-
   For automated tests of the complete example using [bats](https://github.com/bats-core/bats-core) and [Terratest](https://github.com/gruntwork-io/terratest)
   (which tests and deploys the example on AWS), see [test](test).
 
+  To enable Datadog forwarder for RDS Enhanced monitoring:
   ```hcl
-  module "example" {
-    source = "https://github.com/cloudposse/terraform-aws-datadog-forwarder.git?ref=master"
-    example = "Hello world!"
+  module "datadog_lambda_forwarder" {
+    source = "cloudposse/datadog-lambda-forwarder/aws"
+    forwarder_rds_enabled = true
   }
+  ```
+  To enable Datadog forwarder for a CloudTrail S3 bucket:
+  ```hcl
+  module "datadog_lambda_forwarder" {
+    source = "cloudposse/datadog-lambda-forwarder/aws"
+    forwarder_log_enabled = true
+    s3_buckets = ["cloudtrail-audit-bucket"]
+    s3_bucket_kms_arns = ["arn:aws:kms:us-west-2:1234567890:key/b204f3d2-1111-2222-94333332-4444ccc222"]
+  }
+  ```
+  To enable Datadog forwarder for a RDS authentication CloudWatch logs:
+  ```hcl
+  module "datadog_lambda_forwarder" {
+    source = "cloudposse/datadog-lambda-forwarder/aws"
+    forwarder_log_enabled = true
+    cloudwatch_forwarder_log_groups = {
+      postgres:  "/aws/rds/cluster/pg-main/postgresql"
+  }
+  ```
+  To enable Datadog forwarder for VPC Flow Log CloudWatch logs:
+  ```hcl
+  module "datadog_lambda_forwarder" {
+    source = "cloudposse/datadog-lambda-forwarder/aws"
+    forwarder_vpc_logs_enabled = true
+    vpclogs_cloudwatch_log_group = {
+      vpc1:  "/aws/vpc/flowlogs/vpc12"
+    }
+
   ```
 
 # Example usage

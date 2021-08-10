@@ -3,11 +3,11 @@
 # can scrape logs from S3 from specific services (no all logs in s3 are supported)
 # Refer to the table here https://docs.datadoghq.com/logs/guide/send-aws-services-logs-with-the-datadog-lambda-function/?tab=awsconsole#automatically-set-up-triggers
 locals {
-  enabled_s3_logs = local.lambda_enabled && var.s3_buckets != {} && var.forwarder_log_enabled
+  enabled_s3_logs = local.lambda_enabled && var.s3_buckets != null && var.forwarder_log_enabled ? true : false
 }
 
 module "forwarder_log_label" {
-  count = local.lambda_enabled && var.forwarder_logs_enabled ? 1 : 0
+  count      = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
   source     = "cloudposse/label/null"
   version    = "0.24.1" # requires Terraform >= 0.13.0
   attributes = ["forwarder-log"]
@@ -42,7 +42,7 @@ resource "aws_lambda_function" "forwarder_log" {
   source_code_hash               = module.forwarder_log[0].base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
-  tags                           = module.forwarder_log_label.tags
+  tags                           = module.forwarder_log_label[0].tags
 
   dynamic "vpc_config" {
     for_each = try(length(var.subnet_ids), 0) > 0 && try(length(var.security_group_ids), 0) > 0 ? [true] : []
@@ -83,7 +83,7 @@ resource "aws_s3_bucket_notification" "s3_bucket_notification" {
 }
 
 data "aws_iam_policy_document" "s3_log_bucket" {
-  count = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
+  count = local.enabled_s3_logs ? 1 : 0
 
   statement {
     effect = "Allow"
@@ -95,7 +95,7 @@ data "aws_iam_policy_document" "s3_log_bucket" {
       "s3:ListObjects",
     ]
 
-    resources = concat(formatlist("arn:aws:s3:::%s", var.s3_buckets),formatlist("arn:aws:s3:::%s/*", var.s3_buckets))
+    resources = concat(formatlist("arn:aws:s3:::%s", var.s3_buckets), formatlist("arn:aws:s3:::%s/*", var.s3_buckets))
 
   }
 
@@ -114,14 +114,14 @@ data "aws_iam_policy_document" "s3_log_bucket" {
 }
 
 resource "aws_iam_policy" "datadog_s3" {
-  count    = local.enabled_s3_logs ? 1: 0
+  count       = local.enabled_s3_logs ? 1 : 0
   name        = module.forwarder_log_label[0].id
   description = "Policy for Datadog S3 integration"
   policy      = join("", data.aws_iam_policy_document.s3_log_bucket.*.json)
 }
 
 resource "aws_iam_role_policy_attachment" "datadog_s3" {
-  count  = local.enabled_s3_logs ? 1 : 0
+  count      = local.enabled_s3_logs ? 1 : 0
   role       = join("", aws_iam_role.lambda.*.name)
   policy_arn = join("", aws_iam_policy.datadog_s3.*.arn)
 }
@@ -135,7 +135,7 @@ resource "aws_cloudwatch_log_group" "forwarder_log" {
 
   kms_key_id = var.kms_key_id
 
-  tags = module.forwarder_log_label.tags
+  tags = module.forwarder_log_label[0].tags
 }
 
 # Cloudwatch Log Groups
