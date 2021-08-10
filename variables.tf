@@ -1,3 +1,8 @@
+variable "region" {
+  type        = string
+  description = "AWS region"
+}
+
 variable "subnet_ids" {
   description = "List of subnet IDs to use when running in a specific VPC."
   type        = list(string)
