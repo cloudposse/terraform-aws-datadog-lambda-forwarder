@@ -30,7 +30,6 @@ module "cloudwatch-logs" {
 
 module "datadog_lambda_forwarder" {
   source                = "../.."
-  region                = var.region
   forwarder_log_enabled = true
   cloudwatch_forwarder_log_groups = {
     postgres = module.cloudwatch-logs.log_group_name
