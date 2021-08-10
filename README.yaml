@@ -92,7 +92,7 @@ usage: |-
     source = "cloudposse/datadog-lambda-forwarder/aws"
     forwarder_log_enabled = true
     cloudwatch_forwarder_log_groups = {
-      postgres:  "/aws/rds/cluster/pg-main/postgresql"
+      postgres =  "/aws/rds/cluster/pg-main/postgresql"
   }
   ```
   To enable Datadog forwarder for VPC Flow Log CloudWatch logs:
@@ -101,7 +101,7 @@ usage: |-
     source = "cloudposse/datadog-lambda-forwarder/aws"
     forwarder_vpc_logs_enabled = true
     vpclogs_cloudwatch_log_group = {
-      vpc1:  "/aws/vpc/flowlogs/vpc12"
+      vpc1 =  "/aws/vpc/flowlogs/vpc12"
     }
 
   ```
