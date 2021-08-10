@@ -12,3 +12,9 @@
 #   description = "Stable random number for this example"
 #   value       = module.this.enabled ? join("", random_integer.example[*].result) : null
 # }
+
+
+output "lambda_forwarder_rds_enhanced_monitoring_arn" {
+  description = "Datadog Lambda forwarder for Enhanced RDS Metrics function ARN"
+  value       = var.forwarder_rds_enabled ? join("", aws_lambda_function.forwarder_rds[0].arn) : ""
+}
