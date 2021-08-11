@@ -43,6 +43,6 @@ module "datadog_lambda_forwarder" {
   }
   dd_api_key_source = var.dd_api_key_source
 
-  context = module.this.context
+  context    = module.this.context
   depends_on = [aws_ssm_parameter.datadog_key]
 }
