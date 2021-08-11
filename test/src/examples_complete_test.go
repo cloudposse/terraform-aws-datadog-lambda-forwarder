@@ -29,12 +29,19 @@ func TestExamplesComplete(t *testing.T) {
 		Vars: map[string]interface{}{
 			"attributes": attributes,
 		},
+		PlanFilePath: "../../examples/complete/plan.out",
 	}
 	// At the end of the test, run `terraform destroy` to clean up any resources that were created
 	defer terraform.Destroy(t, terraformOptions)
 
 	// This will run `terraform init` and `terraform apply` and fail the test if there are any errors
-	terraform.InitAndApply(t, terraformOptions)
+	//terraform.InitAndApply(t, terraformOptions)
+
+	output := terraform.InitAndPlanAndShow(t, terraformOptions)
+	t.Error(output)
+
+	applyOutput := terraform.Apply(t, terraformOptions)
+	t.Log(applyOutput)
 
 	lambdaRdsArn := terraform.Output(t, terraformOptions, "lambda_forwarder_rds_enhanced_monitoring_arn")
 	expectedlambdaRdsArn := "datadog-forwarder"
@@ -43,4 +50,4 @@ func TestExamplesComplete(t *testing.T) {
 
 }
 
-//eg-ue2-test-datadog-forwarder-28424-forwarder-log
+// //eg-ue2-test-datadog-forwarder-28424-forwarder-log
