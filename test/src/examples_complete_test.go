@@ -37,8 +37,10 @@ func TestExamplesComplete(t *testing.T) {
 	terraform.InitAndApply(t, terraformOptions)
 
 	lambdaRdsArn := terraform.Output(t, terraformOptions, "lambda_forwarder_rds_enhanced_monitoring_arn")
-	expectedlambdaRdsArn := "datadog-forward"
+	expectedlambdaRdsArn := "datadog-forwarder"
 	// Verify we're getting back the outputs we expect
 	assert.Contains(t, lambdaRdsArn, expectedlambdaRdsArn)
 
 }
+
+//eg-ue2-test-datadog-forwarder-28424-forwarder-log
