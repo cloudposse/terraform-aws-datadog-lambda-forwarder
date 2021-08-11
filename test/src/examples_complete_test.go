@@ -36,7 +36,7 @@ func TestExamplesComplete(t *testing.T) {
 	// This will run `terraform init` and `terraform apply` and fail the test if there are any errors
 	terraform.InitAndApply(t, terraformOptions)
 
-	lambdaFunctionName := terraform.Output(t, terraformOptions, "lambda_forwarder_rds_enhanced_monitoring_function_name")
+	lambdaFunctionName := terraform.Output(t, terraformOptions, "lambda_forwarder_log_function_name")
 	// Verify we're getting back the outputs we expect
 	//assert.Contains(t, lambdaRdsArn, expectedlambdaRdsArn)
 

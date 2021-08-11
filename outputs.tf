@@ -14,7 +14,7 @@
 # }
 
 
-output "lambda_forwarder_rds_enhanced_monitoring_arn" {
+output "lambda_forwarder_rds_function_arn" {
   description = "Datadog Lambda forwarder for Enhanced RDS Metrics function ARN"
   value       = var.forwarder_rds_enabled ? join("", aws_lambda_function.forwarder_rds[0].arn) : ""
 }
@@ -22,4 +22,15 @@ output "lambda_forwarder_rds_enhanced_monitoring_arn" {
 output "lambda_forwarder_rds_enhanced_monitoring_function_name" {
   description = "Datadog Lambda forwarder for Enhanced RDS Metrics function ARN"
   value       = var.forwarder_rds_enabled ? join("", aws_lambda_function.forwarder_rds[0].function_name) : ""
+}
+
+
+output "lambda_forwarder_log_function_arn" {
+  description = "Datadog Lambda forwarder for Enhanced RDS Metrics function ARN"
+  value       = var.forwarder_log_enabled ? join("", aws_lambda_function.forwarder_log[0].arn) : ""
+}
+
+output "lambda_forwarder_log_function_name" {
+  description = "Datadog Lambda forwarder for Enhanced RDS Metrics function ARN"
+  value       = var.forwarder_log_enabled ? join("", aws_lambda_function.forwarder_log[0].function_name) : ""
 }
