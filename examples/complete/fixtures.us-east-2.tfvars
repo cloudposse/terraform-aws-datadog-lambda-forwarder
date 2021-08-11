@@ -6,5 +6,5 @@ environment = "ue2"
 
 stage = "test"
 
-name = "ssm-patch"
+name = "datadog-forwarder"
 
