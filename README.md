@@ -264,8 +264,10 @@ Available targets:
 
 | Name | Description |
 |------|-------------|
-| <a name="output_lambda_forwarder_rds_enhanced_monitoring_arn"></a> [lambda\_forwarder\_rds\_enhanced\_monitoring\_arn](#output\_lambda\_forwarder\_rds\_enhanced\_monitoring\_arn) | Datadog Lambda forwarder for Enhanced RDS Metrics function ARN |
+| <a name="output_lambda_forwarder_log_function_arn"></a> [lambda\_forwarder\_log\_function\_arn](#output\_lambda\_forwarder\_log\_function\_arn) | Datadog Lambda forwarder for Enhanced RDS Metrics function ARN |
+| <a name="output_lambda_forwarder_log_function_name"></a> [lambda\_forwarder\_log\_function\_name](#output\_lambda\_forwarder\_log\_function\_name) | Datadog Lambda forwarder for Enhanced RDS Metrics function ARN |
 | <a name="output_lambda_forwarder_rds_enhanced_monitoring_function_name"></a> [lambda\_forwarder\_rds\_enhanced\_monitoring\_function\_name](#output\_lambda\_forwarder\_rds\_enhanced\_monitoring\_function\_name) | Datadog Lambda forwarder for Enhanced RDS Metrics function ARN |
+| <a name="output_lambda_forwarder_rds_function_arn"></a> [lambda\_forwarder\_rds\_function\_arn](#output\_lambda\_forwarder\_rds\_function\_arn) | Datadog Lambda forwarder for Enhanced RDS Metrics function ARN |
 <!-- markdownlint-restore -->
 
 
