@@ -24,7 +24,7 @@ module "subnets" {
 module "cloudwatch-logs" {
   source  = "cloudposse/cloudwatch-logs/aws"
   version = "0.4.3"
-  name    = "/aws/rds/cluster/pg-main/postgresql"
+  name    = "postgresql"
   context = module.this.context
 }
 
