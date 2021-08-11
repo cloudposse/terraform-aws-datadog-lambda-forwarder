@@ -29,25 +29,24 @@ func TestExamplesComplete(t *testing.T) {
 		Vars: map[string]interface{}{
 			"attributes": attributes,
 		},
-		PlanFilePath: "../../examples/complete/plan.out",
 	}
 	// At the end of the test, run `terraform destroy` to clean up any resources that were created
 	defer terraform.Destroy(t, terraformOptions)
 
 	// This will run `terraform init` and `terraform apply` and fail the test if there are any errors
-	//terraform.InitAndApply(t, terraformOptions)
+	terraform.InitAndApply(t, terraformOptions)
 
-	output := terraform.InitAndPlanAndShow(t, terraformOptions)
-	t.Error(output)
-
-	applyOutput := terraform.Apply(t, terraformOptions)
-	t.Log(applyOutput)
-
-	lambdaRdsArn := terraform.Output(t, terraformOptions, "lambda_forwarder_rds_enhanced_monitoring_arn")
-	expectedlambdaRdsArn := "datadog-forwarder"
+	lambdaFunctionName := terraform.Output(t, terraformOptions, "lambda_forwarder_rds_enhanced_monitoring_function_name")
 	// Verify we're getting back the outputs we expect
-	assert.Contains(t, lambdaRdsArn, expectedlambdaRdsArn)
+	//assert.Contains(t, lambdaRdsArn, expectedlambdaRdsArn)
+
+	assert.Equal(t, "eg-ue2-test-datadog-forwarder-"+randID+"-forwarder-log", lambdaFunctionName)
 
 }
 
-// //eg-ue2-test-datadog-forwarder-28424-forwarder-log
+//eg-ue2-test-datadog-forwarder-28424-forwarder-log
+//arn:aws:lambda:us-east-2:530139478025:function:eg-ue2-test-datadog-forwarder-forwarder-log
+// Run `terraform output` to get the value of an output variable
+// awsRoleName := terraform.Output(t, terraformOptions, "aws_role_name")
+// // Verify we're getting back the outputs we expect
+// assert.Equal(t, "eg-test-datadog-integration-"+randId, awsRoleName)
