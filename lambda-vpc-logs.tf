@@ -44,7 +44,7 @@ resource "aws_lambda_function" "forwarder_vpclogs" {
   source_code_hash               = data.archive_file.forwarder_vpclogs[0].output_base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
-  tags                           = module.forwarder_vpclogs_label[0].tags
+  tags                           = module.forwarder_vpclogs_label.tags
 
 
   dynamic "vpc_config" {
