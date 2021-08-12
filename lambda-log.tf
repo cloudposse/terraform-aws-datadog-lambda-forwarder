@@ -36,13 +36,13 @@ resource "aws_lambda_function" "forwarder_log" {
 
   description                    = "Datadog forwarder for log forwarding."
   filename                       = module.forwarder_log_artifact[0].file
-  function_name                  = module.forwarder_log_artifact_label[0].id
+  function_name                  = module.forwarder_log_label[0].id
   role                           = aws_iam_role.lambda[0].arn
   handler                        = "lambda_function.lambda_handler"
   source_code_hash               = module.forwarder_log_artifact[0].base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
-  tags                           = module.forwarder_log_artifact_label.tags
+  tags                           = module.forwarder_log_label[0].tags
 
   dynamic "vpc_config" {
     for_each = try(length(var.subnet_ids), 0) > 0 && try(length(var.security_group_ids), 0) > 0 ? [true] : []
@@ -112,7 +112,7 @@ data "aws_iam_policy_document" "s3_log_bucket" {
 
 resource "aws_iam_policy" "datadog_s3" {
   count       = local.s3_logs_enabled ? 1 : 0
-  name        = module.forwarder_log_artifact_label.id
+  name        = module.forwarder_log_label[0].id
   description = "Policy for Datadog S3 integration"
   policy      = join("", data.aws_iam_policy_document.s3_log_bucket.*.json)
 }
@@ -132,7 +132,7 @@ resource "aws_cloudwatch_log_group" "forwarder_log" {
 
   kms_key_id = var.kms_key_id
 
-  tags = module.forwarder_log_artifact_label.tags
+  tags = module.forwarder_log_label[0].tags
 }
 
 # Cloudwatch Log Groups
@@ -148,7 +148,7 @@ resource "aws_lambda_permission" "cloudwatch_groups" {
 
 resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_log_subscription_filter" {
   for_each        = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_log_groups : {}
-  name            = module.forwarder_log_artifact_label.id
+  name            = module.forwarder_log_label[0].id
   log_group_name  = each.value
   destination_arn = aws_lambda_function.forwarder_log[0].arn
   filter_pattern  = ""
