@@ -42,7 +42,7 @@ resource "aws_lambda_function" "forwarder_log" {
   source_code_hash               = module.forwarder_log[0].base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
-  tags                           = module.forwarder_log_label[0].tags
+  tags                           = module.forwarder_log_label.tags
 
   dynamic "vpc_config" {
     for_each = try(length(var.subnet_ids), 0) > 0 && try(length(var.security_group_ids), 0) > 0 ? [true] : []
