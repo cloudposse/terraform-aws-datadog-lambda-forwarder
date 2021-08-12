@@ -1,9 +1,9 @@
-# The principal lambda forwarder for DD here
+# The principal Lambda forwarder for DD that is implemented here
 # https://github.com/DataDog/datadog-serverless-functions/blob/master/aws/logs_monitoring/lambda_function.py
-# can scrape logs from S3 from specific services (no all logs in s3 are supported)
+# can scrape logs from S3 from specific services (not all s3 logs are supported)
 # Refer to the table here https://docs.datadoghq.com/logs/guide/send-aws-services-logs-with-the-datadog-lambda-function/?tab=awsconsole#automatically-set-up-triggers
 locals {
-  enabled_s3_logs = local.lambda_enabled && var.s3_buckets != null && var.forwarder_log_enabled ? true : false
+  s3_logs_enabled = local.lambda_enabled && var.s3_buckets != null && var.forwarder_log_enabled ? true : false
 }
 
 module "forwarder_log_label" {
@@ -15,7 +15,7 @@ module "forwarder_log_label" {
   context = module.this.context
 }
 
-module "forwarder_log" {
+module "forwarder_log_artifact" {
   count = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
 
   source      = "cloudposse/module-artifact/external"
@@ -42,7 +42,7 @@ resource "aws_lambda_function" "forwarder_log" {
   source_code_hash               = module.forwarder_log[0].base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
-  tags                           = module.forwarder_log_label[0].tags
+  tags                           = module.forwarder_log_label.tags
 
   dynamic "vpc_config" {
     for_each = try(length(var.subnet_ids), 0) > 0 && try(length(var.security_group_ids), 0) > 0 ? [true] : []
@@ -62,8 +62,8 @@ resource "aws_lambda_function" "forwarder_log" {
 }
 
 resource "aws_lambda_permission" "allow_s3_bucket" {
-  for_each      = local.enabled_s3_logs ? toset(var.s3_buckets) : []
-  statement_id  = "AllowExecutionFromS3Bucket"
+  for_each      = local.s3_logs_enabled ? toset(var.s3_buckets) : []
+  statement_id  = "AllowS3ToInvokeLambda"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.forwarder_log[0].arn
   principal     = "s3.amazonaws.com"
@@ -71,7 +71,7 @@ resource "aws_lambda_permission" "allow_s3_bucket" {
 }
 
 resource "aws_s3_bucket_notification" "s3_bucket_notification" {
-  for_each = local.enabled_s3_logs ? toset(var.s3_buckets) : []
+  for_each = local.s3_logs_enabled ? toset(var.s3_buckets) : []
   bucket   = each.key
 
   lambda_function {
@@ -83,7 +83,7 @@ resource "aws_s3_bucket_notification" "s3_bucket_notification" {
 }
 
 data "aws_iam_policy_document" "s3_log_bucket" {
-  count = local.enabled_s3_logs ? 1 : 0
+  count = local.s3_logs_enabled ? 1 : 0
 
   statement {
     effect = "Allow"
@@ -111,8 +111,8 @@ data "aws_iam_policy_document" "s3_log_bucket" {
 }
 
 resource "aws_iam_policy" "datadog_s3" {
-  count       = local.enabled_s3_logs ? 1 : 0
-  name        = module.forwarder_log_label[0].id
+  count       = local.s3_logs_enabled ? 1 : 0
+  name        = module.forwarder_log_label.id
   description = "Policy for Datadog S3 integration"
   policy      = join("", data.aws_iam_policy_document.s3_log_bucket.*.json)
 }

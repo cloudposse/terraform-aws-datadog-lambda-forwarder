@@ -57,7 +57,7 @@ references:
 
 # Short description of this project
 description: |-
-  This is `terraform-aws-datadog-forwarder` can create all the necessary infrastructure to deploy the 3 different [datadog lambda forwarders](https://github.com/DataDog/datadog-serverless-functions/tree/master/aws/logs_monitoring)
+  Terraform module to provision all the necessary infrastructure to deploy [Datadog Lambda forwarders](https://github.com/DataDog/datadog-serverless-functions/tree/master/aws/logs_monitoring)
 
 # Introduction to the project
 #introduction: |-
@@ -86,7 +86,7 @@ usage: |-
     s3_bucket_kms_arns = ["arn:aws:kms:us-west-2:1234567890:key/b204f3d2-1111-2222-94333332-4444ccc222"]
   }
   ```
-  To enable Datadog forwarder for a RDS authentication CloudWatch logs:
+  To enable Datadog forwarder for RDS authentication CloudWatch logs:
   ```hcl
   module "datadog_lambda_forwarder" {
     source = "cloudposse/datadog-lambda-forwarder/aws"
@@ -109,7 +109,7 @@ usage: |-
 # Example usage
 examples: |-
   Here is an example of using this module:
-  - [`examples/complete`](https://github.com/cloudposse/terraform-aws-datadog-forwarder/) - complete example of using this module
+  - [`examples/complete`](examples/complete) - complete example of using this module
 
 # How to get started quickly
 #quickstart: |-
