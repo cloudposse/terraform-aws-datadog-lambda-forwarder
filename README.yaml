@@ -109,7 +109,7 @@ usage: |-
 # Example usage
 examples: |-
   Here is an example of using this module:
-  - [`examples/complete`](https://github.com/cloudposse/terraform-aws-datadog-forwarder/) - complete example of using this module
+  - [`examples/complete`](examples/complete) - complete example of using this module
 
 # How to get started quickly
 #quickstart: |-
