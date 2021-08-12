@@ -76,7 +76,7 @@ resource "aws_lambda_permission" "cloudwatch_vpclogs" {
 
 resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter_vpclogs" {
   count           = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
-  name            = module.forwarder_vpclogs_label[0].id
+  name            = module.forwarder_vpclogs_label.id
   log_group_name  = var.vpclogs_cloudwatch_log_group
   destination_arn = aws_lambda_function.forwarder_vpclogs[0].arn
   filter_pattern  = ""
