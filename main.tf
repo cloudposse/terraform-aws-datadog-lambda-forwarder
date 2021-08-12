@@ -9,7 +9,7 @@ data "aws_region" "current" {
 locals {
   aws_account_id        = join("", data.aws_caller_identity.current.*.account_id)
   aws_region            = join("", data.aws_region.current.*.name)
-  lambda_enabled        = module.this.enabled
+  lambda_enabled        = local.enabled
   dd_api_key_resource   = var.dd_api_key_source.resource
   dd_api_key_identifier = var.dd_api_key_source.identifier
   dd_api_key_arn        = local.dd_api_key_resource == "ssm" ? join("", data.aws_ssm_parameter.api_key.*.arn) : local.dd_api_key_identifier
@@ -113,5 +113,4 @@ resource "aws_iam_role_policy_attachment" "lambda" {
   role       = aws_iam_role.lambda[0].name
   policy_arn = aws_iam_policy.lambda[0].arn
 }
-
 
