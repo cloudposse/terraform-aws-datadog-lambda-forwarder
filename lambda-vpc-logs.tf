@@ -24,7 +24,7 @@ module "forwarder_vpclogs_artifact" {
 data "archive_file" "forwarder_vpclogs" {
   count       = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
   type        = "zip"
-  source_file = module.forwarder_vpclogs[0].file
+  source_file = module.forwarder_vpclogs.file
   output_path = "${path.module}/lambda.zip"
 }
 
