@@ -103,7 +103,7 @@ resource "aws_iam_policy" "lambda" {
   count = local.lambda_enabled ? 1 : 0
 
   name        = module.lambda_label.id
-  description = "Allow put logs and access to Datadog api key."
+  description = "Allow put logs and access to Datadog API key"
   policy      = data.aws_iam_policy_document.lambda[0].json
 }
 
