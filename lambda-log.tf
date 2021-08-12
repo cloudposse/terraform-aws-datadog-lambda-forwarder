@@ -132,7 +132,7 @@ resource "aws_cloudwatch_log_group" "forwarder_log" {
 
   kms_key_id = var.kms_key_id
 
-  tags = module.forwarder_log_label[0].tags
+  tags = module.forwarder_log_label.tags
 }
 
 # Cloudwatch Log Groups
