@@ -118,7 +118,7 @@ resource "aws_iam_policy" "datadog_s3" {
 }
 
 resource "aws_iam_role_policy_attachment" "datadog_s3" {
-  count      = local.enabled_s3_logs ? 1 : 0
+  count      = local.s3_logs_enabled ? 1 : 0
   role       = join("", aws_iam_role.lambda.*.name)
   policy_arn = join("", aws_iam_policy.datadog_s3.*.arn)
 }
@@ -132,7 +132,7 @@ resource "aws_cloudwatch_log_group" "forwarder_log" {
 
   kms_key_id = var.kms_key_id
 
-  tags = module.forwarder_log_label[0].tags
+  tags = module.forwarder_log_label.tags
 }
 
 # Cloudwatch Log Groups
@@ -148,7 +148,7 @@ resource "aws_lambda_permission" "cloudwatch_groups" {
 
 resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_log_subscription_filter" {
   for_each        = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_log_groups : {}
-  name            = module.forwarder_log_label[0].id
+  name            = module.forwarder_log_label.id
   log_group_name  = each.value
   destination_arn = aws_lambda_function.forwarder_log[0].arn
   filter_pattern  = ""

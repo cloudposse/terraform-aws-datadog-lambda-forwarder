@@ -1,9 +1,9 @@
 data "aws_caller_identity" "current" {
-  count = module.this.enabled ? 1 : 0
+  count = local.enabled ? 1 : 0
 }
 
 data "aws_region" "current" {
-  count = module.this.enabled ? 1 : 0
+  count = local.enabled ? 1 : 0
 }
 
 locals {
@@ -66,7 +66,7 @@ resource "aws_iam_role" "lambda" {
 }
 
 ######################################################################
-## Create lambda logging and secret policy then attach to base lambda role
+## Create Lambda policy and attach it to the Lambda role
 
 data "aws_iam_policy_document" "lambda" {
   count = local.lambda_enabled ? 1 : 0
@@ -88,7 +88,7 @@ data "aws_iam_policy_document" "lambda" {
   }
 
   statement {
-    sid = "GetApiKey"
+    sid = "AllowGetOrDecryptApiKey"
 
     effect = "Allow"
 

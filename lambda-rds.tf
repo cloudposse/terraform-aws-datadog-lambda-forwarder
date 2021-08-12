@@ -1,7 +1,7 @@
 # The Datadog lambda forwarder is an entirely different code whithing the same repo and without a release, the code is here:
 # https://github.com/DataDog/datadog-serverless-functions/blob/master/aws/rds_enhanced_monitoring/lambda_function.py
 # This code can only read RDS Enhanced monitoring metrics from cloudwatch and nothing else.
-# if you will like to read the Auth log from an aurora cluster you need to use the lambda-log and pass the cloudwatch group of the cluster/clusters
+# if you'd like to read the Auth log from an Aurora cluster, you need to use the lambda-log and pass the Cloudwatch group of the cluster/clusters
 module "forwarder_rds_label" {
   count      = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
   source     = "cloudposse/label/null"
@@ -11,7 +11,7 @@ module "forwarder_rds_label" {
   context = module.this.context
 }
 
-module "forwarder_rds" {
+module "forwarder_rds_artifact" {
   count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
 
   source      = "cloudposse/module-artifact/external"
@@ -39,13 +39,13 @@ resource "aws_lambda_function" "forwarder_rds" {
 
   description                    = "Datadog forwarder for RDS enhanced monitoring."
   filename                       = data.archive_file.forwarder_rds[0].output_path
-  function_name                  = module.forwarder_rds_label[0].id
+  function_name                  = module.forwarder_rds_label.id
   role                           = aws_iam_role.lambda[0].arn
   handler                        = "forwarder-rds.lambda_handler"
   source_code_hash               = data.archive_file.forwarder_rds[0].output_base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
-  tags                           = module.forwarder_rds_label[0].tags
+  tags                           = module.forwarder_rds_label.tags
 
   dynamic "vpc_config" {
     for_each = try(length(var.subnet_ids), 0) > 0 && try(length(var.security_group_ids), 0) > 0 ? [true] : []

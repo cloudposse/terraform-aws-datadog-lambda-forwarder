@@ -98,7 +98,7 @@ variable "dd_forwarder_version" {
 
 variable "forwarder_log_enabled" {
   type        = bool
-  description = "Enable to add Datadog log forwarder"
+  description = "Flag to enable or disable Datadog log forwarder"
   default     = false
 }
 
@@ -134,7 +134,7 @@ variable "s3_buckets" {
 
 variable "s3_bucket_kms_arns" {
   type        = list(string)
-  description = "List of KMS ARNs keys of the encrypted buckets"
+  description = "List of KMS key ARNs for s3 bucket encryption"
   default     = []
 }
 
