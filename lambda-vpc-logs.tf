@@ -24,7 +24,7 @@ module "forwarder_vpclogs_artifact" {
 data "archive_file" "forwarder_vpclogs" {
   count       = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
   type        = "zip"
-  source_file = module.forwarder_vpclogs.file
+  source_file = module.forwarder_vpclogs_artifact[0].file
   output_path = "${path.module}/lambda.zip"
 }
 
@@ -38,13 +38,13 @@ resource "aws_lambda_function" "forwarder_vpclogs" {
 
   description                    = "Datadog forwarder for VPC Flow"
   filename                       = data.archive_file.forwarder_vpclogs[0].output_path
-  function_name                  = module.forwarder_vpclogs_label.id
+  function_name                  = module.forwarder_vpclogs_artifact[0]_label.id
   role                           = aws_iam_role.lambda[0].arn
   handler                        = "lambda_function.lambda_handler"
   source_code_hash               = data.archive_file.forwarder_vpclogs[0].output_base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
-  tags                           = module.forwarder_vpclogs_label.tags
+  tags                           = module.forwarder_vpclogs_artifact[0]_label.tags
 
 
   dynamic "vpc_config" {
@@ -76,7 +76,7 @@ resource "aws_lambda_permission" "cloudwatch_vpclogs" {
 
 resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter_vpclogs" {
   count           = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
-  name            = module.forwarder_vpclogs_label.id
+  name            = module.forwarder_vpclogs_artifact[0]_label.id
   log_group_name  = var.vpclogs_cloudwatch_log_group
   destination_arn = aws_lambda_function.forwarder_vpclogs[0].arn
   filter_pattern  = ""
@@ -92,5 +92,5 @@ resource "aws_cloudwatch_log_group" "forwarder_vpclogs" {
 
   kms_key_id = var.kms_key_id
 
-  tags = module.forwarder_vpclogs_label.tags
+  tags = module.forwarder_vpclogs_artifact[0]_label.tags
 }

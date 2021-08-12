@@ -25,7 +25,7 @@ module "forwarder_rds_artifact" {
 data "archive_file" "forwarder_rds" {
   count       = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
   type        = "zip"
-  source_file = module.forwarder_rds[0].file
+  source_file = module.forwarder_rds_artifact[0].file
   output_path = "${path.module}/lambda.zip"
 }
 
@@ -39,13 +39,13 @@ resource "aws_lambda_function" "forwarder_rds" {
 
   description                    = "Datadog forwarder for RDS enhanced monitoring."
   filename                       = data.archive_file.forwarder_rds[0].output_path
-  function_name                  = module.forwarder_rds_label.id
+  function_name                  = module.forwarder_rds_artifact_label.id
   role                           = aws_iam_role.lambda[0].arn
   handler                        = "forwarder-rds.lambda_handler"
   source_code_hash               = data.archive_file.forwarder_rds[0].output_base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
-  tags                           = module.forwarder_rds_label.tags
+  tags                           = module.forwarder_rds_artifact_label.tags
 
   dynamic "vpc_config" {
     for_each = try(length(var.subnet_ids), 0) > 0 && try(length(var.security_group_ids), 0) > 0 ? [true] : []
@@ -76,7 +76,7 @@ resource "aws_lambda_permission" "cloudwatch_enhance_rds" {
 
 resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter_rds" {
   count           = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
-  name            = module.forwarder_rds_label[0].id
+  name            = module.forwarder_rds_artifact_label[0].id
   log_group_name  = "RDSOSMetrics"
   destination_arn = aws_lambda_function.forwarder_rds[0].arn
   filter_pattern  = ""
@@ -91,5 +91,5 @@ resource "aws_cloudwatch_log_group" "forwarder_rds" {
 
   kms_key_id = var.kms_key_id
 
-  tags = module.forwarder_rds_label[0].tags
+  tags = module.forwarder_rds_artifact_label[0].tags
 }
