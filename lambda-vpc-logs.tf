@@ -92,5 +92,5 @@ resource "aws_cloudwatch_log_group" "forwarder_vpclogs" {
 
   kms_key_id = var.kms_key_id
 
-  tags = module.forwarder_vpclogs_label[0].tags
+  tags = module.forwarder_vpclogs_label.tags
 }
