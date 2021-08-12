@@ -3,7 +3,7 @@ data "aws_caller_identity" "current" {
 }
 
 data "aws_region" "current" {
-  count = module.this.enabled ? 1 : 0
+  count = local.enabled ? 1 : 0
 }
 
 locals {
