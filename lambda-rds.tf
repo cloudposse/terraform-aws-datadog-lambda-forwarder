@@ -39,7 +39,7 @@ resource "aws_lambda_function" "forwarder_rds" {
 
   description                    = "Datadog forwarder for RDS enhanced monitoring."
   filename                       = data.archive_file.forwarder_rds[0].output_path
-  function_name                  = module.forwarder_rds_label[0].id
+  function_name                  = module.forwarder_rds_label.id
   role                           = aws_iam_role.lambda[0].arn
   handler                        = "forwarder-rds.lambda_handler"
   source_code_hash               = data.archive_file.forwarder_rds[0].output_base64sha256
