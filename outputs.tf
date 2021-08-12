@@ -26,5 +26,5 @@ output "lambda_forwarder_vpc_log_function_arn" {
 
 output "lambda_forwarder_vpc_log_function_name" {
   description = "Datadog Lambda forwarder VPC FlowLogs function name"
-  value       = var.forwarder_log_enabled ? join("", aws_lambda_function.forwarder_vpclogs.*.function_name) : ""
+  value       = join("", aws_lambda_function.forwarder_vpclogs.*.function_name)
 }
