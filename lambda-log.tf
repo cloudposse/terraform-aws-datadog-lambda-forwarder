@@ -62,7 +62,7 @@ resource "aws_lambda_function" "forwarder_log" {
 }
 
 resource "aws_lambda_permission" "allow_s3_bucket" {
-  for_each      = local.enabled_s3_logs ? toset(var.s3_buckets) : []
+  for_each      = local.s3_logs_enabled ? toset(var.s3_buckets) : []
   statement_id  = "AllowExecutionFromS3Bucket"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.forwarder_log[0].arn
