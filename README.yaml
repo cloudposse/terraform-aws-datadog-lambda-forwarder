@@ -86,7 +86,7 @@ usage: |-
     s3_bucket_kms_arns = ["arn:aws:kms:us-west-2:1234567890:key/b204f3d2-1111-2222-94333332-4444ccc222"]
   }
   ```
-  To enable Datadog forwarder for a RDS authentication CloudWatch logs:
+  To enable Datadog forwarder for RDS authentication CloudWatch logs:
   ```hcl
   module "datadog_lambda_forwarder" {
     source = "cloudposse/datadog-lambda-forwarder/aws"
