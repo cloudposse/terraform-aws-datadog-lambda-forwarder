@@ -66,7 +66,7 @@ resource "aws_iam_role" "lambda" {
 }
 
 ######################################################################
-## Create lambda logging and secret policy then attach to base lambda role
+## Create Lambda policy and attach it to the Lambda role
 
 data "aws_iam_policy_document" "lambda" {
   count = local.lambda_enabled ? 1 : 0
