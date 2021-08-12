@@ -10,7 +10,7 @@ module "forwarder_vpclogs_label" {
   context = module.this.context
 }
 
-module "forwarder_vpclogs" {
+module "forwarder_vpclogs_artifact" {
   count = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
 
   source      = "cloudposse/module-artifact/external"
