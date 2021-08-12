@@ -140,7 +140,7 @@ variable "s3_bucket_kms_arns" {
 
 variable "cloudwatch_forwarder_log_groups" {
   type        = map(string)
-  description = "Map of Cloudwatch log groups that the lambda forwarder will send logs from, e.g. { mysql1 \= "/aws/rds/maincluster"}"
+  description = "Map of Cloudwatch log groups that the lambda forwarder will send logs from. example mysql1 \= "/aws/rds/maincluster""
   default     = {}
 }
 
