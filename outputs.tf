@@ -1,7 +1,7 @@
 
 output "lambda_forwarder_rds_function_arn" {
   description = "Datadog Lambda forwarder Enhanced RDS Metrics function ARN"
-  value       =  join("", aws_lambda_function.forwarder_rds.*.arn)
+  value       = join("", aws_lambda_function.forwarder_rds.*.arn)
 }
 
 output "lambda_forwarder_rds_enhanced_monitoring_function_name" {
