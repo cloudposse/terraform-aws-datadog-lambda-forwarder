@@ -7,6 +7,7 @@ data "aws_region" "current" {
 }
 
 locals {
+  enabled = module.this.enabled
   aws_account_id        = join("", data.aws_caller_identity.current.*.account_id)
   aws_region            = join("", data.aws_region.current.*.name)
   lambda_enabled        = local.enabled
