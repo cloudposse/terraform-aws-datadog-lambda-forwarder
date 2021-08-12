@@ -140,7 +140,7 @@ variable "s3_bucket_kms_arns" {
 
 variable "cloudwatch_forwarder_log_groups" {
   type        = map(string)
-  description = "List of cloudwatch log groups that the lambda forwarder will send logs from"
+  description = "Map of Cloudwatch log groups that the lambda forwarder will send logs from, e.g. {mysql1 = "/aws/rds/maincluster"}"
   default     = {}
 }
 
@@ -152,6 +152,6 @@ variable "forwarder_lambda_debug_enabled" {
 
 variable "vpclogs_cloudwatch_log_group" {
   type        = string
-  description = "The name lf the Cloudwatch Log Group for VPC flow logs"
+  description = "The name of the Cloudwatch Log Group for VPC flow logs"
   default     = ""
 }
