@@ -10,7 +10,7 @@ output "lambda_forwarder_rds_enhanced_monitoring_function_name" {
 }
 
 output "lambda_forwarder_log_function_arn" {
-  description = "Datadog Lambda forwarder  CloudWatch/S3 function ARN"
+  description = "Datadog Lambda forwarder CloudWatch/S3 function ARN"
   value       = var.forwarder_log_enabled ? join("", aws_lambda_function.forwarder_log.*.arn) : ""
 }
 

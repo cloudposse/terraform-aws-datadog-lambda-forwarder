@@ -94,9 +94,7 @@ data "aws_iam_policy_document" "s3_log_bucket" {
       "s3:ListBucket",
       "s3:ListObjects",
     ]
-
     resources = concat(formatlist("arn:aws:s3:::%s", var.s3_buckets), formatlist("arn:aws:s3:::%s/*", var.s3_buckets))
-
   }
 
   dynamic "statement" {
@@ -107,7 +105,6 @@ data "aws_iam_policy_document" "s3_log_bucket" {
       actions = [
         "kms:Decrypt"
       ]
-
       resources = var.s3_bucket_kms_arns
     }
   }
