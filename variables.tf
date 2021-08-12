@@ -134,7 +134,7 @@ variable "s3_buckets" {
 
 variable "s3_bucket_kms_arns" {
   type        = list(string)
-  description = "List of KMS ARNs keys of the encrypted buckets"
+  description = "List of KMS key ARNs for s3 bucket encryption"
   default     = []
 }
 
