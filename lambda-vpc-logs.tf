@@ -67,7 +67,7 @@ resource "aws_lambda_function" "forwarder_vpclogs" {
 resource "aws_lambda_permission" "cloudwatch_vpclogs" {
   count = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
 
-  statement_id  = "datadog-forwarder-flowlogs-cloudwatchlogspermission"
+  statement_id  = "datadog-forwarder-flowlogs-cloudwatchlogs-permission"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.forwarder_vpclogs[0].function_name
   principal     = "logs.amazonaws.com"

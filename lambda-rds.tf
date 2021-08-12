@@ -1,4 +1,4 @@
-# The Datadog lambda forwarder is an entirely different code whithing the same repo and without a release
+# The Datadog lambda forwarder is an entirely different code whithing the same repo and without a release, the code is here:
 # https://github.com/DataDog/datadog-serverless-functions/blob/master/aws/rds_enhanced_monitoring/lambda_function.py
 # This code can only read RDS Enhanced monitoring metrics from cloudwatch and nothing else.
 # if you will like to read the Auth log from an aurora cluster you need to use the lambda-log and pass the cloudwatch group of the cluster/clusters
@@ -67,7 +67,7 @@ resource "aws_lambda_function" "forwarder_rds" {
 resource "aws_lambda_permission" "cloudwatch_enhance_rds" {
   count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
 
-  statement_id  = "datadog-forwarder-RDSCloudWatchLogsPermission"
+  statement_id  = "datadog-forwarder-rds-cloudwatch-logs-permission"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.forwarder_rds[0].function_name
   principal     = "logs.amazonaws.com"
