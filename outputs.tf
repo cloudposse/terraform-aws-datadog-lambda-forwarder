@@ -5,7 +5,7 @@ output "lambda_forwarder_rds_function_arn" {
 }
 
 output "lambda_forwarder_rds_enhanced_monitoring_function_name" {
-  description = "Datadog Lambda forwarder  Enhanced RDS Metrics function ARN"
+  description = "Datadog Lambda forwarder Enhanced RDS Metrics function name"
   value       = var.forwarder_rds_enabled ? join("", aws_lambda_function.forwarder_rds.*.function_name) : ""
 }
 
