@@ -83,7 +83,7 @@ resource "aws_s3_bucket_notification" "s3_bucket_notification" {
 }
 
 data "aws_iam_policy_document" "s3_log_bucket" {
-  count = local.enabled_s3_logs ? 1 : 0
+  count = local.s3_logs_enabled ? 1 : 0
 
   statement {
     effect = "Allow"
