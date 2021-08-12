@@ -1,6 +1,6 @@
 # The Datadog lambda forwarder is an entirely different code whithing the same repo and without a release
 # https://github.com/DataDog/datadog-serverless-functions/blob/master/aws/vpc_flow_log_monitoring/lambda_function.py
-# This code can only read VPC flog logs send to a cloudwatch group ( not from S3 )
+# This code can only read VPC flog logs sent to a Cloudwatch Log Group ( not from S3 )
 module "forwarder_vpclogs_label" {
   count      = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
   source     = "cloudposse/label/null"
