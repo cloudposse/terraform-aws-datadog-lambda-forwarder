@@ -57,7 +57,7 @@ references:
 
 # Short description of this project
 description: |-
-  This is `terraform-aws-datadog-forwarder` can create all the necessary infrastructure to deploy the 3 different [datadog lambda forwarders](https://github.com/DataDog/datadog-serverless-functions/tree/master/aws/logs_monitoring)
+  Terraform module to provision all the necessary infrastructure to deploy [Datadog Lambda forwarders](https://github.com/DataDog/datadog-serverless-functions/tree/master/aws/logs_monitoring)
 
 # Introduction to the project
 #introduction: |-
