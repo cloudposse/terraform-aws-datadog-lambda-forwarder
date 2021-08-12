@@ -3,7 +3,7 @@
 # can scrape logs from S3 from specific services (not all s3 logs are supported)
 # Refer to the table here https://docs.datadoghq.com/logs/guide/send-aws-services-logs-with-the-datadog-lambda-function/?tab=awsconsole#automatically-set-up-triggers
 locals {
-  enabled_s3_logs = local.lambda_enabled && var.s3_buckets != null && var.forwarder_log_enabled ? true : false
+  s3_logs_enabled = local.lambda_enabled && var.s3_buckets != null && var.forwarder_log_enabled ? true : false
 }
 
 module "forwarder_log_label" {
