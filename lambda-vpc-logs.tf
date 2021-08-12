@@ -38,7 +38,7 @@ resource "aws_lambda_function" "forwarder_vpclogs" {
 
   description                    = "Datadog forwarder for VPC Flow"
   filename                       = data.archive_file.forwarder_vpclogs[0].output_path
-  function_name                  = module.forwarder_vpclogs_label[0].id
+  function_name                  = module.forwarder_vpclogs_label.id
   role                           = aws_iam_role.lambda[0].arn
   handler                        = "lambda_function.lambda_handler"
   source_code_hash               = data.archive_file.forwarder_vpclogs[0].output_base64sha256
