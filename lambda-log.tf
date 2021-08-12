@@ -115,7 +115,7 @@ data "aws_iam_policy_document" "s3_log_bucket" {
 
 resource "aws_iam_policy" "datadog_s3" {
   count       = local.s3_logs_enabled ? 1 : 0
-  name        = module.forwarder_log_label[0].id
+  name        = module.forwarder_log_label.id
   description = "Policy for Datadog S3 integration"
   policy      = join("", data.aws_iam_policy_document.s3_log_bucket.*.json)
 }
