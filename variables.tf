@@ -19,7 +19,7 @@ variable "lambda_reserved_concurrent_executions" {
 
 variable "lambda_runtime" {
   type        = string
-  description = "Runtime environment for Datadog lambda."
+  description = "Runtime environment for Datadog Lambda"
   default     = "python3.7"
 }
 
@@ -155,4 +155,3 @@ variable "vpclogs_cloudwatch_log_group" {
   description = "The name lf the Cloudwatch log group for vpc flow logs"
   default     = ""
 }
-
