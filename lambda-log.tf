@@ -118,7 +118,7 @@ resource "aws_iam_policy" "datadog_s3" {
 }
 
 resource "aws_iam_role_policy_attachment" "datadog_s3" {
-  count      = local.enabled_s3_logs ? 1 : 0
+  count      = local.s3_logs_enabled ? 1 : 0
   role       = join("", aws_iam_role.lambda.*.name)
   policy_arn = join("", aws_iam_policy.datadog_s3.*.arn)
 }
