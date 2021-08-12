@@ -15,7 +15,7 @@ module "forwarder_log_label" {
   context = module.this.context
 }
 
-module "forwarder_log" {
+module "forwarder_log_artifact" {
   count = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
 
   source      = "cloudposse/module-artifact/external"
