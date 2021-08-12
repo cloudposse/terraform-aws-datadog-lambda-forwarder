@@ -92,7 +92,7 @@ variable "dd_artifact_url" {
 
 variable "dd_forwarder_version" {
   type        = string
-  description = "Version tag of datadog lambdas to use. https://github.com/DataDog/datadog-serverless-functions/releases"
+  description = "Version tag of Datadog lambdas to use. https://github.com/DataDog/datadog-serverless-functions/releases"
   default     = "3.34.0"
 }
 
