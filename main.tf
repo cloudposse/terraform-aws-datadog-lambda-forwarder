@@ -38,7 +38,7 @@ module "lambda_label" {
 }
 
 ######################################################################
-## Create base assume policy and lambda role
+## Create a policy document to assume role and a lambda role
 
 data "aws_iam_policy_document" "assume" {
   count = local.lambda_enabled ? 1 : 0
@@ -113,4 +113,3 @@ resource "aws_iam_role_policy_attachment" "lambda" {
   role       = aws_iam_role.lambda[0].name
   policy_arn = aws_iam_policy.lambda[0].arn
 }
-
