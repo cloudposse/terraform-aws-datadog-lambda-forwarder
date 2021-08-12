@@ -152,6 +152,6 @@ variable "forwarder_lambda_debug_enabled" {
 
 variable "vpclogs_cloudwatch_log_group" {
   type        = string
-  description = "The name lf the Cloudwatch log group for vpc flow logs"
+  description = "The name lf the Cloudwatch Log Group for VPC flow logs"
   default     = ""
 }
