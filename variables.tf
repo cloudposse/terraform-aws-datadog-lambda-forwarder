@@ -98,7 +98,7 @@ variable "dd_forwarder_version" {
 
 variable "forwarder_log_enabled" {
   type        = bool
-  description = "Enable to add Datadog log forwarder"
+  description = "Flag to enable or disable Datadog log forwarder"
   default     = false
 }
 
