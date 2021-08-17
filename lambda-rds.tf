@@ -4,7 +4,7 @@
 # if you'd like to read the Auth log from an Aurora cluster, you need to use the lambda-log and pass the Cloudwatch group of the cluster/clusters
 
 locals {
-  forwarder_rds_artifact_url = var.forwarder_rds_artifact_url != "" ? var.forwarder_rds_artifact_url : "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/rds_enhanced_monitoring/lambda_function.py?ref=${var.dd_forwarder_version}"
+  forwarder_rds_artifact_url = var.forwarder_rds_artifact_url != null ? var.forwarder_rds_artifact_url : "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/rds_enhanced_monitoring/lambda_function.py?ref=${var.dd_forwarder_version}"
 }
 module "forwarder_rds_label" {
   count      = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0

@@ -149,23 +149,23 @@ variable "forwarder_lambda_debug_enabled" {
 variable "vpclogs_cloudwatch_log_group" {
   type        = string
   description = "The name of the Cloudwatch Log Group for VPC flow logs"
-  default     = ""
+  default     = null
 }
 
 variable "forwarder_rds_artifact_url" {
   type        = string
   description = "The url for the code of the Datadog forwarder RDS, it can be a local file, url or git repo"
-  default     = ""
+  default     = null
 }
 
 variable "forwarder_vpc_logs_artifact_url" {
   type        = string
   description = "The url for the code of the Datadog forwarder VPC Logs, it can be a local file, url or git repo"
-  default     = ""
+  default     = null
 }
 
 variable "forwarder_log_artifact_url" {
   type        = string
   description = "The url for the code of the Datadog forwarder Log, it can be a local file, url or git repo"
-  default     = ""
+  default     = null
 }

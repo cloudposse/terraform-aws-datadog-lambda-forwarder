@@ -3,7 +3,7 @@
 # This code can only read VPC flog logs sent to a Cloudwatch Log Group ( not from S3 )
 
 locals {
-  forwarder_vpc_logs_artifact_url = var.forwarder_vpc_logs_artifact_url != "" ? var.forwarder_vpc_logs_artifact_url : "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/vpc_flow_log_monitoring/lambda_function.py?ref=${var.dd_forwarder_version}"
+  forwarder_vpc_logs_artifact_url = var.forwarder_vpc_logs_artifact_url != null ? var.forwarder_vpc_logs_artifact_url : "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/vpc_flow_log_monitoring/lambda_function.py?ref=${var.dd_forwarder_version}"
 }
 
 module "forwarder_vpclogs_label" {
