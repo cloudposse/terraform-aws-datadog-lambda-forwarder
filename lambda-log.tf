@@ -23,7 +23,7 @@ module "forwarder_log_artifact" {
   filename    = "forwarder-log.zip"
   module_name = var.dd_module_name
   module_path = path.module
-  url         = "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-${var.dd_forwarder_version}/aws-dd-forwarder-${var.dd_forwarder_version}.zip"
+  url         = var.forwarder_log_artifact_url
 }
 
 ######################################################################

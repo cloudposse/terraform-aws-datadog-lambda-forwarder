@@ -2,6 +2,7 @@
 # https://github.com/DataDog/datadog-serverless-functions/blob/master/aws/rds_enhanced_monitoring/lambda_function.py
 # This code can only read RDS Enhanced monitoring metrics from cloudwatch and nothing else.
 # if you'd like to read the Auth log from an Aurora cluster, you need to use the lambda-log and pass the Cloudwatch group of the cluster/clusters
+
 module "forwarder_rds_label" {
   count      = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
   source     = "cloudposse/label/null"
@@ -19,7 +20,7 @@ module "forwarder_rds_artifact" {
   filename    = "forwarder-rds.py"
   module_name = var.dd_module_name
   module_path = path.module
-  url         = "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/rds_enhanced_monitoring/lambda_function.py?ref=${var.dd_forwarder_version}"
+  url         = var.forwarder_rds_artifact_url
 }
 
 data "archive_file" "forwarder_rds" {
