@@ -84,12 +84,6 @@ variable "dd_module_name" {
   default     = "datadog-serverless-functions"
 }
 
-variable "dd_artifact_url" {
-  type        = string
-  description = "The URL template to format the full URL to the Datadog zip artifact"
-  default     = "https://github.com/DataDog/$$${module_name}/releases/download/%v-$$${git_ref}/$$${filename}"
-}
-
 variable "dd_forwarder_version" {
   type        = string
   description = "Version tag of Datadog lambdas to use. https://github.com/DataDog/datadog-serverless-functions/releases"
@@ -161,17 +155,17 @@ variable "vpclogs_cloudwatch_log_group" {
 variable "forwarder_rds_artifact_url" {
   type        = string
   description = "The url for the code of the Datadog forwarder RDS, it can be a local file, url or git repo"
-  default     = "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/rds_enhanced_monitoring/lambda_function.py?ref=${var.dd_forwarder_version}"
+  default     = "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/rds_enhanced_monitoring/lambda_function.py?ref=$${var.dd_forwarder_version}"
 }
 
 variable "forwarder_vpc_logs_artifact_url" {
   type        = string
   description = "The url for the code of the Datadog forwarder VPC Logs, it can be a local file, url or git repo"
-  default     = "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/vpc_flow_log_monitoring/lambda_function.py?ref=${var.dd_forwarder_version}"
+  default     = "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/vpc_flow_log_monitoring/lambda_function.py?ref=$${var.dd_forwarder_version}"
 }
 
 variable "forwarder_log_artifact_url" {
   type        = string
   description = "The url for the code of the Datadog forwarder Log, it can be a local file, url or git repo"
-  default     = "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-${var.dd_forwarder_version}/aws-dd-forwarder-${var.dd_forwarder_version}.zip"
+  default     = "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-$${var.dd_forwarder_version}/aws-dd-forwarder-$${var.dd_forwarder_version}.zip"
 }
