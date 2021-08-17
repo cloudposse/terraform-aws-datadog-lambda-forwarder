@@ -155,17 +155,17 @@ variable "vpclogs_cloudwatch_log_group" {
 variable "forwarder_rds_artifact_url" {
   type        = string
   description = "The url for the code of the Datadog forwarder RDS, it can be a local file, url or git repo"
-  default     = "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/rds_enhanced_monitoring/lambda_function.py?ref=$${var.dd_forwarder_version}"
+  default     = ""
 }
 
 variable "forwarder_vpc_logs_artifact_url" {
   type        = string
   description = "The url for the code of the Datadog forwarder VPC Logs, it can be a local file, url or git repo"
-  default     = "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/vpc_flow_log_monitoring/lambda_function.py?ref=$${var.dd_forwarder_version}"
+  default     = ""
 }
 
 variable "forwarder_log_artifact_url" {
   type        = string
   description = "The url for the code of the Datadog forwarder Log, it can be a local file, url or git repo"
-  default     = "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-$${var.dd_forwarder_version}/aws-dd-forwarder-$${var.dd_forwarder_version}.zip"
+  default     = ""
 }

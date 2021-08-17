@@ -4,6 +4,7 @@
 # Refer to the table here https://docs.datadoghq.com/logs/guide/send-aws-services-logs-with-the-datadog-lambda-function/?tab=awsconsole#automatically-set-up-triggers
 locals {
   s3_logs_enabled = local.lambda_enabled && var.s3_buckets != null && var.forwarder_log_enabled ? true : false
+  forwarder_log_artifact_url = var.forwarder_log_artifact_url != "" ? var.forwarder_log_artifact_url : "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-${var.dd_forwarder_version}/aws-dd-forwarder-${var.dd_forwarder_version}.zip"
 }
 
 module "forwarder_log_label" {
@@ -23,7 +24,7 @@ module "forwarder_log_artifact" {
   filename    = "forwarder-log.zip"
   module_name = var.dd_module_name
   module_path = path.module
-  url         = var.forwarder_log_artifact_url
+  url         = local.forwarder_log_artifact_url
 }
 
 ######################################################################
