@@ -5,7 +5,7 @@
 #
 
 # Name of this project
-name: terraform-example-module
+name: terraform-aws-datadog-forwarder
 
 # Logo for this project
 #logo: docs/logo.png
@@ -20,13 +20,13 @@ copyrights:
     year: "2020"
 
 # Canonical GitHub repo
-github_repo: cloudposse/terraform-example-module
+github_repo: cloudposse/terraform-aws-datadog-forwarder
 
 # Badges to display
 badges:
   - name: "Latest Release"
-    image: "https://img.shields.io/github/release/cloudposse/terraform-example-module.svg"
-    url: "https://github.com/cloudposse/terraform-example-module/releases/latest"
+    image: "https://img.shields.io/github/release/cloudposse/terraform-aws-datadog-forwarder.svg"
+    url: "https://github.com/cloudposse/terraform-aws-datadog-forwarder/releases/latest"
   - name: "Slack Community"
     image: "https://slack.cloudposse.com/badge.svg"
     url: "https://slack.cloudposse.com"
@@ -57,8 +57,7 @@ references:
 
 # Short description of this project
 description: |-
-  This is `terraform-example-module` project provides all the scaffolding for a typical well-built Cloud Posse module. It's a template repository you can
-  use when creating new repositories.
+  Terraform module to provision all the necessary infrastructure to deploy [Datadog Lambda forwarders](https://github.com/DataDog/datadog-serverless-functions/tree/master/aws/logs_monitoring)
 
 # Introduction to the project
 #introduction: |-
@@ -67,21 +66,62 @@ description: |-
 # How to use this module. Should be an easy example to copy and paste.
 usage: |-
   For a complete example, see [examples/complete](examples/complete).
-  
+
   For automated tests of the complete example using [bats](https://github.com/bats-core/bats-core) and [Terratest](https://github.com/gruntwork-io/terratest)
   (which tests and deploys the example on AWS), see [test](test).
 
+  To enable Datadog forwarder for RDS Enhanced monitoring:
   ```hcl
-  module "example" {
-    source = "https://github.com/cloudposse/terraform-example-module.git?ref=master"
-    example = "Hello world!"
+  module "datadog_lambda_forwarder" {
+    source = "cloudposse/datadog-lambda-forwarder/aws"
+    forwarder_rds_enabled = true
   }
   ```
+  To enable Datadog forwarder for a CloudTrail S3 bucket:
+  ```hcl
+  module "datadog_lambda_forwarder" {
+    source = "cloudposse/datadog-lambda-forwarder/aws"
+    forwarder_log_enabled = true
+    s3_buckets = ["cloudtrail-audit-bucket"]
+    s3_bucket_kms_arns = ["arn:aws:kms:us-west-2:1234567890:key/b204f3d2-1111-2222-94333332-4444ccc222"]
+  }
+  ```
+  To enable Datadog forwarder for RDS authentication CloudWatch logs:
+  ```hcl
+  module "datadog_lambda_forwarder" {
+    source = "cloudposse/datadog-lambda-forwarder/aws"
+    forwarder_log_enabled = true
+    cloudwatch_forwarder_log_groups = {
+      postgres =  "/aws/rds/cluster/pg-main/postgresql"
+  }
+  ```
+  To enable Datadog forwarder for VPC Flow Log CloudWatch logs:
+  ```hcl
+  module "datadog_lambda_forwarder" {
+    source = "cloudposse/datadog-lambda-forwarder/aws"
+    forwarder_vpc_logs_enabled = true
+    vpclogs_cloudwatch_log_group = {
+      vpc1 =  "/aws/vpc/flowlogs/vpc12"
+    }
+
+  ```
+
+  To use a local copy of the lambda code you can specify the artifact url:
+  ```hcl
+  module "datadog_lambda_forwarder" {
+    source = "cloudposse/datadog-lambda-forwarder/aws"
+    forwarder_log_enabled = true
+    forwarder_rds_artifact_url = "${file("${path.module}/function.zip")}"
+    cloudwatch_forwarder_log_groups = {
+      postgres =  "/aws/rds/cluster/pg-main/postgresql"
+  }
+  ```
+
 
 # Example usage
 examples: |-
   Here is an example of using this module:
-  - [`examples/complete`](https://github.com/cloudposse/terraform-example-module/) - complete example of using this module
+  - [`examples/complete`](examples/complete) - complete example of using this module
 
 # How to get started quickly
 #quickstart: |-
@@ -94,5 +134,5 @@ include:
 
 # Contributors to this project
 contributors:
-  - name: "Erik Osterman"
-    github: "osterman"
+  - name: "PePe Amengual"
+    github: "jamengual"

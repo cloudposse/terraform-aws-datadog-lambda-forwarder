@@ -1,14 +1,9 @@
-output "id" {
-  description = "ID of the created example"
-  value       = module.example.id
+output "lambda_forwarder_log_function_arn" {
+  description = "Datadog Lambda forwarder CloudWatch/S3 function ARN"
+  value       = module.datadog_lambda_forwarder.lambda_forwarder_log_function_arn
 }
 
-output "example" {
-  description = "Output \"example\" from example module"
-  value       = module.example.example
-}
-
-output "random" {
-  description = "Output \"random\" from example module"
-  value       = module.example.random
+output "lambda_forwarder_log_function_name" {
+  description = "Datadog Lambda forwarder CloudWatch/S3 function name"
+  value       = module.datadog_lambda_forwarder.lambda_forwarder_log_function_name
 }
