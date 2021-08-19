@@ -138,11 +138,8 @@ To use a local copy of the lambda code you can specify the artifact url:
 ```hcl
 module "datadog_lambda_forwarder" {
   source = "cloudposse/datadog-lambda-forwarder/aws"
-  forwarder_log_enabled = true
+  forwarder_rds_enabled = true
   forwarder_rds_artifact_url = "${file("${path.module}/function.zip")}"
-  cloudwatch_forwarder_log_groups = {
-    postgres =  "/aws/rds/cluster/pg-main/postgresql"
-}
 ```
 
 
