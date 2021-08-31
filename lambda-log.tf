@@ -68,7 +68,7 @@ resource "aws_lambda_permission" "allow_s3_bucket" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.forwarder_log[0].arn
   principal     = "s3.amazonaws.com"
-  source_arn    = "arn:aws:s3:::${each.value}"
+  source_arn    = "${local.arn_format}:s3:::${each.value}"
 }
 
 resource "aws_s3_bucket_notification" "s3_bucket_notification" {
@@ -95,7 +95,7 @@ data "aws_iam_policy_document" "s3_log_bucket" {
       "s3:ListBucket",
       "s3:ListObjects",
     ]
-    resources = concat(formatlist("arn:aws:s3:::%s", var.s3_buckets), formatlist("arn:aws:s3:::%s/*", var.s3_buckets))
+    resources = concat(formatlist("%s:s3:::%s", local.arn_format, var.s3_buckets), formatlist("%s:s3:::%s/*", local.arn_format, var.s3_buckets))
   }
 
   dynamic "statement" {
@@ -144,7 +144,7 @@ resource "aws_lambda_permission" "cloudwatch_groups" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.forwarder_log[0].function_name
   principal     = "logs.${local.aws_region}.amazonaws.com"
-  source_arn    = "arn:aws:logs:${local.aws_region}:${local.aws_account_id}:log-group:${each.value}:*"
+  source_arn    = "${local.arn_format}:logs:${local.aws_region}:${local.aws_account_id}:log-group:${each.value}:*"
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_log_subscription_filter" {

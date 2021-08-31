@@ -2,12 +2,17 @@ data "aws_caller_identity" "current" {
   count = local.enabled ? 1 : 0
 }
 
+data "aws_partition" "current" {
+  count = local.enabled ? 1 : 0
+}
+
 data "aws_region" "current" {
   count = local.enabled ? 1 : 0
 }
 
 locals {
   enabled               = module.this.enabled
+  arn_format            = "arn:${data.aws_partition.current[0].partition}"
   aws_account_id        = join("", data.aws_caller_identity.current.*.account_id)
   aws_region            = join("", data.aws_region.current.*.name)
   lambda_enabled        = local.enabled

@@ -75,7 +75,7 @@ resource "aws_lambda_permission" "cloudwatch_enhance_rds" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.forwarder_rds[0].function_name
   principal     = "logs.amazonaws.com"
-  source_arn    = "arn:aws:logs:${local.aws_region}:${local.aws_account_id}:log-group:RDSOSMetrics:*"
+  source_arn    = "${local.arn_format}:logs:${local.aws_region}:${local.aws_account_id}:log-group:RDSOSMetrics:*"
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter_rds" {
