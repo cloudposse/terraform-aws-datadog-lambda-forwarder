@@ -11,14 +11,14 @@ data "aws_region" "current" {
 }
 
 locals {
-  enabled                   = module.this.enabled
-  arn_format                = "arn:${data.aws_partition.current[0].partition}"
-  aws_account_id            = join("", data.aws_caller_identity.current.*.account_id)
-  aws_region                = join("", data.aws_region.current.*.name)
-  lambda_enabled            = local.enabled
-  dd_api_key_resource       = var.dd_api_key_source.resource
-  dd_api_key_identifier     = var.dd_api_key_source.identifier
-  dd_api_key_arn            = local.dd_api_key_resource == "ssm" ? join("", data.aws_ssm_parameter.api_key.*.arn) : local.dd_api_key_identifier
+  enabled               = module.this.enabled
+  arn_format            = "arn:${data.aws_partition.current[0].partition}"
+  aws_account_id        = join("", data.aws_caller_identity.current.*.account_id)
+  aws_region            = join("", data.aws_region.current.*.name)
+  lambda_enabled        = local.enabled
+  dd_api_key_resource   = var.dd_api_key_source.resource
+  dd_api_key_identifier = var.dd_api_key_source.identifier
+  dd_api_key_arn        = local.dd_api_key_resource == "ssm" ? join("", data.aws_ssm_parameter.api_key.*.arn) : local.dd_api_key_identifier
 
   dd_api_key_iam_actions    = [lookup({ kms = "kms:Decrypt", asm = "secretsmanager:GetSecretValue", ssm = "ssm:GetParameter" }, local.dd_api_key_resource, "")]
   dd_api_key_kms            = local.dd_api_key_resource == "kms" ? { DD_KMS_API_KEY = var.dd_api_key_kms_ciphertext_blob } : {}
@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "lambda" {
 
   # #checkov:skip=BC_AWS_IAM_57: (Pertaining to contstraining IAM write access) This policy has not write access and is restricted to one specific ARN.
 
-  source_json = var.lambda_policy_source_json 
+  source_json = var.lambda_policy_source_json
 
   statement {
     sid = "AllowWriteLogs"
