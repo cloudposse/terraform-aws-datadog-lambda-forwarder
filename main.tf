@@ -26,7 +26,6 @@ locals {
   dd_api_key_ssm            = local.dd_api_key_resource == "ssm" ? { DD_API_KEY_SSM_NAME = local.dd_api_key_identifier } : {}
   lambda_debug              = var.forwarder_lambda_debug_enabled ? { DD_LOG_LEVEL = "debug" } : {}
   lambda_env                = merge(local.dd_api_key_kms, local.dd_api_key_asm, local.dd_api_key_ssm, local.lambda_debug)
-  lambda_policy_source_json = var.lambda_policy_source_json
 }
 
 # Log Forwarder, RDS Enhanced Forwarder, VPC Flow Log Forwarder
