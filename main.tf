@@ -79,6 +79,8 @@ data "aws_iam_policy_document" "lambda" {
 
   # #checkov:skip=BC_AWS_IAM_57: (Pertaining to contstraining IAM write access) This policy has not write access and is restricted to one specific ARN.
 
+  source_json = var.lambda_policy_source_json
+
   statement {
     sid = "AllowWriteLogs"
 

@@ -169,3 +169,9 @@ variable "forwarder_log_artifact_url" {
   description = "The url for the code of the Datadog forwarder Log, it can be a local file, url or git repo"
   default     = null
 }
+
+variable "lambda_policy_source_json" {
+  type        = string
+  description = "Additional IAM policy document that can optionally be passed and merged with exported document"
+  default     = ""
+}
