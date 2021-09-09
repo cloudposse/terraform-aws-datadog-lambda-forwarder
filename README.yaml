@@ -5,7 +5,7 @@
 #
 
 # Name of this project
-name: terraform-aws-datadog-forwarder
+name: terraform-aws-datadog-lambda-forwarder
 
 # Logo for this project
 #logo: docs/logo.png
@@ -20,13 +20,13 @@ copyrights:
     year: "2020"
 
 # Canonical GitHub repo
-github_repo: cloudposse/terraform-aws-datadog-forwarder
+github_repo: cloudposse/terraform-aws-datadog-lambda-forwarder
 
 # Badges to display
 badges:
   - name: "Latest Release"
-    image: "https://img.shields.io/github/release/cloudposse/terraform-aws-datadog-forwarder.svg"
-    url: "https://github.com/cloudposse/terraform-aws-datadog-forwarder/releases/latest"
+    image: "https://img.shields.io/github/release/cloudposse/terraform-aws-datadog-lambda-forwarder.svg"
+    url: "https://github.com/cloudposse/terraform-aws-datadog-lambda-forwarder/releases/latest"
   - name: "Slack Community"
     image: "https://slack.cloudposse.com/badge.svg"
     url: "https://slack.cloudposse.com"
