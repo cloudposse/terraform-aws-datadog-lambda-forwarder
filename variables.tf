@@ -181,7 +181,7 @@ variable "forwarder_lambda_datadog_host" {
   description = "Define your Datadog Site to send data to. Possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com` and `ddog-gov.com`"
   default     = "datadoghq.com"
   validation {
-    condition = contains(["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"], var.forwarder_lambda_datadog_host)
+    condition     = contains(["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"], var.forwarder_lambda_datadog_host)
     error_message = "Invalid host: possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com` and `ddog-gov.com`."
   }
 }
