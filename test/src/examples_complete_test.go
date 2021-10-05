@@ -30,6 +30,7 @@ func TestExamplesComplete(t *testing.T) {
 			"attributes": attributes,
 		},
 	}
+
 	// At the end of the test, run `terraform destroy` to clean up any resources that were created
 	defer terraform.Destroy(t, terraformOptions)
 
@@ -41,5 +42,4 @@ func TestExamplesComplete(t *testing.T) {
 	//assert.Contains(t, lambdaRdsArn, expectedlambdaRdsArn)
 
 	assert.Equal(t, "eg-ue2-test-datadog-forwarder-"+randID+"-forwarder-log", lambdaFunctionName)
-
 }

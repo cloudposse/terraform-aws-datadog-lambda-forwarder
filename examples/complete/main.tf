@@ -1,6 +1,6 @@
 module "cloudwatch-logs" {
   source  = "cloudposse/cloudwatch-logs/aws"
-  version = "0.4.3"
+  version = "0.5.0"
   name    = "postgresql"
   context = module.this.context
 }

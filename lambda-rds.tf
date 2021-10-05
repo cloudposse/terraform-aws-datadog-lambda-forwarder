@@ -4,22 +4,26 @@
 # if you'd like to read the Auth log from an Aurora cluster, you need to use the lambda-log and pass the Cloudwatch group of the cluster/clusters
 
 locals {
-  forwarder_rds_artifact_url = var.forwarder_rds_artifact_url != null ? var.forwarder_rds_artifact_url : "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/rds_enhanced_monitoring/lambda_function.py?ref=${var.dd_forwarder_version}"
+  forwarder_rds_artifact_url = var.forwarder_rds_artifact_url != null ? var.forwarder_rds_artifact_url : (
+    "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/rds_enhanced_monitoring/lambda_function.py?ref=${var.dd_forwarder_version}"
+  )
 }
+
 module "forwarder_rds_label" {
-  count      = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
-  source     = "cloudposse/label/null"
-  version    = "0.24.1" # requires Terraform >= 0.13.0
+  count   = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+  source  = "cloudposse/label/null"
+  version = "0.25.0"
+
   attributes = ["forwarder-rds"]
 
   context = module.this.context
 }
 
 module "forwarder_rds_artifact" {
-  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+  count   = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+  source  = "cloudposse/module-artifact/external"
+  version = "0.7.0"
 
-  source      = "cloudposse/module-artifact/external"
-  version     = "0.7.0"
   filename    = "forwarder-rds.py"
   module_name = var.dd_module_name
   module_path = path.module
@@ -87,13 +91,11 @@ resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filt
 }
 
 resource "aws_cloudwatch_log_group" "forwarder_rds" {
-
   count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
 
   name              = "/aws/lambda/${aws_lambda_function.forwarder_rds[0].function_name}"
   retention_in_days = var.forwarder_log_retention_days
-
-  kms_key_id = var.kms_key_id
+  kms_key_id        = var.kms_key_id
 
   tags = module.forwarder_rds_label[0].tags
 }

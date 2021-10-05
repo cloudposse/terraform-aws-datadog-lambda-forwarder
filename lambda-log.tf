@@ -3,24 +3,28 @@
 # can scrape logs from S3 from specific services (not all s3 logs are supported)
 # Refer to the table here https://docs.datadoghq.com/logs/guide/send-aws-services-logs-with-the-datadog-lambda-function/?tab=awsconsole#automatically-set-up-triggers
 locals {
-  s3_logs_enabled            = local.lambda_enabled && var.s3_buckets != null && var.forwarder_log_enabled ? true : false
-  forwarder_log_artifact_url = var.forwarder_log_artifact_url != null ? var.forwarder_log_artifact_url : "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-${var.dd_forwarder_version}/aws-dd-forwarder-${var.dd_forwarder_version}.zip"
+  s3_logs_enabled = local.lambda_enabled && var.s3_buckets != null && var.forwarder_log_enabled ? true : false
+
+  forwarder_log_artifact_url = var.forwarder_log_artifact_url != null ? var.forwarder_log_artifact_url : (
+    "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-${var.dd_forwarder_version}/aws-dd-forwarder-${var.dd_forwarder_version}.zip"
+  )
 }
 
 module "forwarder_log_label" {
-  count      = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
-  source     = "cloudposse/label/null"
-  version    = "0.24.1" # requires Terraform >= 0.13.0
+  count   = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
+  source  = "cloudposse/label/null"
+  version = "0.25.0"
+
   attributes = ["forwarder-log"]
 
   context = module.this.context
 }
 
 module "forwarder_log_artifact" {
-  count = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
+  count   = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
+  source  = "cloudposse/module-artifact/external"
+  version = "0.7.0"
 
-  source      = "cloudposse/module-artifact/external"
-  version     = "0.7.0"
   filename    = "forwarder-log.zip"
   module_name = var.dd_module_name
   module_path = path.module
@@ -136,7 +140,7 @@ resource "aws_cloudwatch_log_group" "forwarder_log" {
   tags = module.forwarder_log_label[0].tags
 }
 
-# Cloudwatch Log Groups
+# CloudWatch Log Groups
 resource "aws_lambda_permission" "cloudwatch_groups" {
   for_each = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_log_groups : {}
 

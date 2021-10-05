@@ -3,23 +3,26 @@
 # This code can only read VPC flog logs sent to a Cloudwatch Log Group ( not from S3 )
 
 locals {
-  forwarder_vpc_logs_artifact_url = var.forwarder_vpc_logs_artifact_url != null ? var.forwarder_vpc_logs_artifact_url : "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/vpc_flow_log_monitoring/lambda_function.py?ref=${var.dd_forwarder_version}"
+  forwarder_vpc_logs_artifact_url = var.forwarder_vpc_logs_artifact_url != null ? var.forwarder_vpc_logs_artifact_url : (
+    "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/vpc_flow_log_monitoring/lambda_function.py?ref=${var.dd_forwarder_version}"
+  )
 }
 
 module "forwarder_vpclogs_label" {
-  count      = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
-  source     = "cloudposse/label/null"
-  version    = "0.24.1" # requires Terraform >= 0.13.0
+  count   = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
+  source  = "cloudposse/label/null"
+  version = "0.25.0"
+
   attributes = ["forwarder-vpclogs"]
 
   context = module.this.context
 }
 
 module "forwarder_vpclogs_artifact" {
-  count = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
+  count   = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
+  source  = "cloudposse/module-artifact/external"
+  version = "0.7.0"
 
-  source      = "cloudposse/module-artifact/external"
-  version     = "0.7.0"
   filename    = "lambda_function.py"
   module_name = var.dd_module_name
   module_path = path.module
@@ -87,15 +90,12 @@ resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filt
   filter_pattern  = ""
 }
 
-
 resource "aws_cloudwatch_log_group" "forwarder_vpclogs" {
-
   count = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
 
   name              = "/aws/lambda/${aws_lambda_function.forwarder_vpclogs[0].function_name}"
   retention_in_days = var.forwarder_log_retention_days
-
-  kms_key_id = var.kms_key_id
+  kms_key_id        = var.kms_key_id
 
   tags = module.forwarder_vpclogs_label[0].tags
 }

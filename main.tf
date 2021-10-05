@@ -38,7 +38,7 @@ data "aws_ssm_parameter" "api_key" {
 
 module "lambda_label" {
   source     = "cloudposse/label/null"
-  version    = "0.24.1" # requires Terraform >= 0.13.0
+  version    = "0.25.0"
   attributes = ["forwarder-lambda"]
 
   context = module.this.context
