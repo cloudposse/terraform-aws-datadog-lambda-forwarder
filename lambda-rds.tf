@@ -15,7 +15,7 @@ module "forwarder_rds_label" {
 
   enabled = local.lambda_enabled && var.forwarder_rds_enabled
 
-  attributes = ["forwarder-rds"]
+  attributes = ["rds"]
 
   context = module.this.context
 }
@@ -38,6 +38,31 @@ data "archive_file" "forwarder_rds" {
   output_path = "${path.module}/lambda.zip"
 }
 
+resource "aws_iam_role" "lambda_forwarder_rds" {
+  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+
+  name               = module.forwarder_rds_label.id
+  description        = "Datadog Lambda RDS enhanced monitoring forwarder"
+  assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
+  tags               = module.forwarder_rds_label.tags
+}
+
+resource "aws_iam_policy" "lambda_forwarder_rds" {
+  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+
+  name        = module.forwarder_rds_label.id
+  description = "Datadog Lambda RDS enhanced monitoring forwarder"
+  policy      = data.aws_iam_policy_document.lambda_default[0].json
+  tags        = module.forwarder_rds_label.tags
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_forwarder_rds" {
+  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+
+  role       = aws_iam_role.lambda_forwarder_rds[0].name
+  policy_arn = aws_iam_policy.lambda_forwarder_rds[0].arn
+}
+
 ######################################################################
 ## Create lambda function
 
@@ -46,10 +71,10 @@ resource "aws_lambda_function" "forwarder_rds" {
 
   #checkov:skip=BC_AWS_GENERAL_64: (Pertaining to Lambda DLQ) Vendor lambda does not have a means to reprocess failed events.
 
-  description                    = "Datadog forwarder for RDS enhanced monitoring."
+  description                    = "Datadog forwarder for RDS enhanced monitoring"
   filename                       = data.archive_file.forwarder_rds[0].output_path
   function_name                  = module.forwarder_rds_label.id
-  role                           = aws_iam_role.lambda[0].arn
+  role                           = aws_iam_role.lambda_forwarder_rds[0].arn
   handler                        = "forwarder-rds.lambda_handler"
   source_code_hash               = data.archive_file.forwarder_rds.output_base64sha256
   runtime                        = var.lambda_runtime

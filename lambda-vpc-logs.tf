@@ -14,7 +14,7 @@ module "forwarder_vpclogs_label" {
 
   enabled = local.lambda_enabled && var.forwarder_vpc_logs_enabled
 
-  attributes = ["forwarder-vpclogs"]
+  attributes = ["vpc-flow-logs"]
 
   context = module.this.context
 }
@@ -37,6 +37,31 @@ data "archive_file" "forwarder_vpclogs" {
   output_path = "${path.module}/lambda.zip"
 }
 
+resource "aws_iam_role" "lambda_forwarder_vpclogs" {
+  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+
+  name               = module.forwarder_vpclogs_label.id
+  description        = "Datadog Lambda VPC Flow Logs forwarder"
+  assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
+  tags               = module.forwarder_vpclogs_label.tags
+}
+
+resource "aws_iam_policy" "lambda_forwarder_vpclogs" {
+  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+
+  name        = module.forwarder_vpclogs_label.id
+  description = "Datadog Lambda VPC Flow Logs forwarder"
+  policy      = data.aws_iam_policy_document.lambda_default[0].json
+  tags        = module.forwarder_vpclogs_label.tags
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_forwarder_rds" {
+  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+
+  role       = aws_iam_role.lambda_forwarder_vpclogs[0].name
+  policy_arn = aws_iam_policy.lambda_forwarder_vpclogs[0].arn
+}
+
 ######################################################################
 ## Create lambda function
 
@@ -48,7 +73,7 @@ resource "aws_lambda_function" "forwarder_vpclogs" {
   description                    = "Datadog Lambda forwarder for VPC Flow Logs"
   filename                       = data.archive_file.forwarder_vpclogs[0].output_path
   function_name                  = module.forwarder_vpclogs_label.id
-  role                           = aws_iam_role.lambda[0].arn
+  role                           = aws_iam_role.lambda_forwarder_vpclogs[0].arn
   handler                        = "lambda_function.lambda_handler"
   source_code_hash               = data.archive_file.forwarder_vpclogs[0].output_base64sha256
   runtime                        = var.lambda_runtime

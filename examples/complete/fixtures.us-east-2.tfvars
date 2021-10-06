@@ -6,4 +6,4 @@ environment = "ue2"
 
 stage = "test"
 
-name = "datadog-forwarder"
+name = "datadog-lambda-forwarder"

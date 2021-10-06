@@ -36,14 +36,6 @@ data "aws_ssm_parameter" "api_key" {
   name  = local.dd_api_key_identifier
 }
 
-module "lambda_label" {
-  source     = "cloudposse/label/null"
-  version    = "0.25.0"
-  attributes = ["forwarder-lambda"]
-
-  context = module.this.context
-}
-
 ######################################################################
 ## Create a policy document to allow Lambda to assume role
 
@@ -64,19 +56,10 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
-resource "aws_iam_role" "lambda" {
-  count = local.lambda_enabled ? 1 : 0
-
-  name               = module.lambda_label.id
-  description        = "Datadog Lambda Forwarder IAM role"
-  assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
-  tags               = module.lambda_label.tags
-}
-
 ######################################################################
 ## Create Lambda policy and attach it to the Lambda role
 
-data "aws_iam_policy_document" "lambda" {
+data "aws_iam_policy_document" "lambda_default" {
   count = local.lambda_enabled ? 1 : 0
 
   # #checkov:skip=BC_AWS_IAM_57: (Pertaining to constraining IAM write access) This policy has not write access and is restricted to one specific ARN.
@@ -106,20 +89,4 @@ data "aws_iam_policy_document" "lambda" {
 
     resources = [local.dd_api_key_arn]
   }
-}
-
-resource "aws_iam_policy" "lambda" {
-  count = local.lambda_enabled ? 1 : 0
-
-  name        = module.lambda_label.id
-  description = "Allow Datadog Lambda Forwarder to write logs and access and decrypt the Datadog API key"
-  policy      = data.aws_iam_policy_document.lambda[0].json
-  tags        = module.lambda_label.tags
-}
-
-resource "aws_iam_role_policy_attachment" "lambda" {
-  count = local.lambda_enabled ? 1 : 0
-
-  role       = aws_iam_role.lambda[0].name
-  policy_arn = aws_iam_policy.lambda[0].arn
 }

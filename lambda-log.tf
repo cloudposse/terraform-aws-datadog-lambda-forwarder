@@ -17,7 +17,7 @@ module "forwarder_log_label" {
 
   enabled = local.lambda_enabled && var.forwarder_log_enabled
 
-  attributes = ["forwarder-log"]
+  attributes = ["logs"]
 
   context = module.this.context
 }
@@ -33,6 +33,31 @@ module "forwarder_log_artifact" {
   url         = local.forwarder_log_artifact_url
 }
 
+resource "aws_iam_role" "lambda_forwarder_log" {
+  count = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
+
+  name               = module.forwarder_log_label.id
+  description        = "Datadog Lambda CloudWatch/S3 logs forwarder"
+  assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
+  tags               = module.forwarder_log_label.tags
+}
+
+resource "aws_iam_policy" "lambda_forwarder_log" {
+  count = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
+
+  name        = module.forwarder_log_label.id
+  description = "Datadog Lambda CloudWatch/S3 logs forwarder"
+  policy      = data.aws_iam_policy_document.lambda_default[0].json
+  tags        = module.forwarder_log_label.tags
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_forwarder_log" {
+  count = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
+
+  role       = aws_iam_role.lambda_forwarder_log[0].name
+  policy_arn = aws_iam_policy.lambda_forwarder_log[0].arn
+}
+
 ######################################################################
 ## Create lambda function
 
@@ -41,10 +66,10 @@ resource "aws_lambda_function" "forwarder_log" {
 
   #checkov:skip=BC_AWS_GENERAL_64: (Pertaining to Lambda DLQ) Vendor lambda does not have a means to reprocess failed events.
 
-  description                    = "Datadog forwarder for CloudWatch/S3 log forwarding"
+  description                    = "Datadog Forwarder for CloudWatch/S3 logs"
   filename                       = module.forwarder_log_artifact[0].file
   function_name                  = module.forwarder_log_label.id
-  role                           = aws_iam_role.lambda[0].arn
+  role                           = aws_iam_role.lambda_forwarder_log[0].arn
   handler                        = "lambda_function.lambda_handler"
   source_code_hash               = module.forwarder_log_artifact[0].base64sha256
   runtime                        = var.lambda_runtime
@@ -127,7 +152,7 @@ resource "aws_iam_policy" "datadog_s3" {
 
 resource "aws_iam_role_policy_attachment" "datadog_s3" {
   count      = local.s3_logs_enabled ? 1 : 0
-  role       = join("", aws_iam_role.lambda.*.name)
+  role       = join("", aws_iam_role.lambda_forwarder_log.*.name)
   policy_arn = join("", aws_iam_policy.datadog_s3.*.arn)
 }
 
