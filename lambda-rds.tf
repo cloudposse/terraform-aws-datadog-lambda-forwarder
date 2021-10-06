@@ -1,4 +1,4 @@
-# The Datadog lambda RDS enhanced monitoring code:
+# The Datadog Lambda RDS enhanced monitoring code:
 # https://github.com/DataDog/datadog-serverless-functions/blob/master/aws/rds_enhanced_monitoring/lambda_function.py
 # This code can only read RDS Enhanced monitoring metrics from CloudWatch and nothing else.
 # If you'd like to read the Auth log from an Aurora cluster, you need to use the `lambda-log` Lambda function and pass the CloudWatch Group of the cluster/clusters
