@@ -41,5 +41,5 @@ func TestExamplesComplete(t *testing.T) {
 	// Verify we're getting back the outputs we expect
 	//assert.Contains(t, lambdaRdsArn, expectedlambdaRdsArn)
 
-	assert.Equal(t, "eg-ue2-test-datadog-forwarder-"+randID+"-forwarder-log", lambdaFunctionName)
+	assert.Equal(t, "eg-ue2-test-datadog-lambda-forwarder-"+randID+"-logs", lambdaFunctionName)
 }
