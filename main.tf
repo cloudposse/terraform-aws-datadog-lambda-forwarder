@@ -12,7 +12,7 @@ data "aws_region" "current" {
 
 locals {
   enabled               = module.this.enabled
-  arn_format            = "arn:${data.aws_partition.current[0].partition}"
+  arn_format            = local.enabled ? "arn:${data.aws_partition.current[0].partition}" : ""
   aws_account_id        = join("", data.aws_caller_identity.current.*.account_id)
   aws_region            = join("", data.aws_region.current.*.name)
   lambda_enabled        = local.enabled
@@ -45,7 +45,7 @@ module "lambda_label" {
 }
 
 ######################################################################
-## Create a policy document to assume role and a lambda role
+## Create a policy document to allow Lambda to assume role
 
 data "aws_iam_policy_document" "assume" {
   count = local.lambda_enabled ? 1 : 0
@@ -68,6 +68,7 @@ resource "aws_iam_role" "lambda" {
   count = local.lambda_enabled ? 1 : 0
 
   name               = module.lambda_label.id
+  description        = "Lambda Forwarder role"
   assume_role_policy = data.aws_iam_policy_document.assume[0].json
   tags               = module.lambda_label.tags
 }
@@ -105,15 +106,15 @@ data "aws_iam_policy_document" "lambda" {
 
     resources = [local.dd_api_key_arn]
   }
-
 }
 
 resource "aws_iam_policy" "lambda" {
   count = local.lambda_enabled ? 1 : 0
 
   name        = module.lambda_label.id
-  description = "Allow put logs and access to Datadog API key"
+  description = "Allow Lambda Forwarder to write logs and access and decrypt the Datadog API key"
   policy      = data.aws_iam_policy_document.lambda[0].json
+  tags        = module.lambda_label.tags
 }
 
 resource "aws_iam_role_policy_attachment" "lambda" {
