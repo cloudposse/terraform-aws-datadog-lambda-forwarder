@@ -76,7 +76,7 @@ resource "aws_lambda_function" "forwarder_rds" {
   function_name                  = module.forwarder_rds_label.id
   role                           = aws_iam_role.lambda_forwarder_rds[0].arn
   handler                        = "forwarder-rds.lambda_handler"
-  source_code_hash               = data.archive_file.forwarder_rds.output_base64sha256
+  source_code_hash               = data.archive_file.forwarder_rds[0].output_base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
 
