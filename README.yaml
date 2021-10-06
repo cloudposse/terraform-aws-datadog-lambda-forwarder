@@ -95,13 +95,13 @@ usage: |-
       postgres =  "/aws/rds/cluster/pg-main/postgresql"
   }
   ```
-  To enable Datadog forwarder for VPC Flow Log CloudWatch logs:
+  To enable Datadog forwarder for VPC Flow Logs CloudWatch logs:
   ```hcl
   module "datadog_lambda_forwarder" {
     source = "cloudposse/datadog-lambda-forwarder/aws"
     forwarder_vpc_logs_enabled = true
     vpclogs_cloudwatch_log_group = {
-      vpc1 =  "/aws/vpc/flowlogs/vpc12"
+      vpc1 =  "/aws/vpc/flowlogs/vpc1"
     }
 
   ```

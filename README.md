@@ -125,13 +125,13 @@ module "datadog_lambda_forwarder" {
     postgres =  "/aws/rds/cluster/pg-main/postgresql"
 }
 ```
-To enable Datadog forwarder for VPC Flow Log CloudWatch logs:
+To enable Datadog forwarder for VPC Flow Logs CloudWatch logs:
 ```hcl
 module "datadog_lambda_forwarder" {
   source = "cloudposse/datadog-lambda-forwarder/aws"
   forwarder_vpc_logs_enabled = true
   vpclogs_cloudwatch_log_group = {
-    vpc1 =  "/aws/vpc/flowlogs/vpc12"
+    vpc1 =  "/aws/vpc/flowlogs/vpc1"
   }
 
 ```
@@ -216,7 +216,7 @@ Available targets:
 | [aws_lambda_function.forwarder_rds](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
 | [aws_lambda_function.forwarder_vpclogs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
 | [aws_lambda_permission.allow_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
-| [aws_lambda_permission.cloudwatch_enhance_rds](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
+| [aws_lambda_permission.cloudwatch_enhanced_rds_monitoring](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_lambda_permission.cloudwatch_groups](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_lambda_permission.cloudwatch_vpclogs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_s3_bucket_notification.s3_bucket_notification](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification) | resource |
