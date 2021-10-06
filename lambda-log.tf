@@ -1,20 +1,21 @@
-# The principal Lambda forwarder for DD that is implemented here
+# The principal Lambda forwarder for Datadog is implemented here
 # https://github.com/DataDog/datadog-serverless-functions/blob/master/aws/logs_monitoring/lambda_function.py
-# can scrape logs from S3 from specific services (not all s3 logs are supported)
+# It can scrape logs from S3 from specific services (not all s3 logs are supported)
 # Refer to the table here https://docs.datadoghq.com/logs/guide/send-aws-services-logs-with-the-datadog-lambda-function/?tab=awsconsole#automatically-set-up-triggers
 
 locals {
   s3_logs_enabled = local.lambda_enabled && var.s3_buckets != null && var.forwarder_log_enabled ? true : false
 
   forwarder_log_artifact_url = var.forwarder_log_artifact_url != null ? var.forwarder_log_artifact_url : (
-    "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-${var.dd_forwarder_version}/aws-dd-forwarder-${var.dd_forwarder_version}.zip"
+    "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-${var.dd_forwarder_version}/${var.dd_artifact_filename}-${var.dd_forwarder_version}.zip"
   )
 }
 
 module "forwarder_log_label" {
-  count   = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
   source  = "cloudposse/label/null"
   version = "0.25.0"
+
+  enabled = local.lambda_enabled && var.forwarder_log_enabled
 
   attributes = ["forwarder-log"]
 
@@ -40,15 +41,15 @@ resource "aws_lambda_function" "forwarder_log" {
 
   #checkov:skip=BC_AWS_GENERAL_64: (Pertaining to Lambda DLQ) Vendor lambda does not have a means to reprocess failed events.
 
-  description                    = "Datadog forwarder for log forwarding."
+  description                    = "Datadog forwarder for CloudWatch/S3 log forwarding"
   filename                       = module.forwarder_log_artifact[0].file
-  function_name                  = module.forwarder_log_label[0].id
+  function_name                  = module.forwarder_log_label.id
   role                           = aws_iam_role.lambda[0].arn
   handler                        = "lambda_function.lambda_handler"
   source_code_hash               = module.forwarder_log_artifact[0].base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
-  tags                           = module.forwarder_log_label[0].tags
+  tags                           = module.forwarder_log_label.tags
 
   dynamic "vpc_config" {
     for_each = try(length(var.subnet_ids), 0) > 0 && try(length(var.security_group_ids), 0) > 0 ? [true] : []
@@ -118,7 +119,7 @@ data "aws_iam_policy_document" "s3_log_bucket" {
 
 resource "aws_iam_policy" "datadog_s3" {
   count       = local.s3_logs_enabled ? 1 : 0
-  name        = module.forwarder_log_label[0].id
+  name        = module.forwarder_log_label.id
   description = "Policy for Datadog S3 integration"
   policy      = join("", data.aws_iam_policy_document.s3_log_bucket.*.json)
 }
@@ -138,7 +139,7 @@ resource "aws_cloudwatch_log_group" "forwarder_log" {
 
   kms_key_id = var.kms_key_id
 
-  tags = module.forwarder_log_label[0].tags
+  tags = module.forwarder_log_label.tags
 }
 
 # CloudWatch Log Groups
@@ -153,8 +154,9 @@ resource "aws_lambda_permission" "cloudwatch_groups" {
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_log_subscription_filter" {
-  for_each        = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_log_groups : {}
-  name            = module.forwarder_log_label[0].id
+  for_each = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_log_groups : {}
+
+  name            = module.forwarder_log_label.id
   log_group_name  = each.value
   destination_arn = aws_lambda_function.forwarder_log[0].arn
   filter_pattern  = ""

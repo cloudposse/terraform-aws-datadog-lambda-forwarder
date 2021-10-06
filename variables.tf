@@ -44,25 +44,25 @@ variable "dd_api_key_source" {
   # Resource can be one of kms, asm, ssm ("" to disable all lambda resources)
   validation {
     condition     = can(regex("(kms|asm|ssm)", var.dd_api_key_source.resource)) || var.dd_api_key_source.resource == ""
-    error_message = "Provide one, and only one, ARN for (kms, asm) or name (ssm) to retrieve or decrypt Datadog api key"
+    error_message = "Provide one, and only one, ARN for (kms, asm) or name (ssm) to retrieve or decrypt Datadog api key."
   }
 
   # Check KMS ARN format
   validation {
     condition     = var.dd_api_key_source.resource == "kms" ? can(regex("arn:.*:kms:.*:key/.*", var.dd_api_key_source.identifier)) : true
-    error_message = "ARN for KMS key does not appear to be valid format (example: arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab)"
+    error_message = "ARN for KMS key does not appear to be valid format (example: arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab)."
   }
 
   # Check ASM ARN format
   validation {
     condition     = var.dd_api_key_source.resource == "asm" ? can(regex("arn:.*:secretsmanager:.*:secret:.*", var.dd_api_key_source.identifier)) : true
-    error_message = "ARN for AWS Secrets Manager (asm) does not appear to be valid format (example: arn:aws:secretsmanager:us-west-2:111122223333:secret:aes128-1a2b3c)"
+    error_message = "ARN for AWS Secrets Manager (asm) does not appear to be valid format (example: arn:aws:secretsmanager:us-west-2:111122223333:secret:aes128-1a2b3c)."
   }
 
   # Check SSM name format
   validation {
     condition     = var.dd_api_key_source.resource == "ssm" ? can(regex("^[a-zA-Z0-9_./-]+$", var.dd_api_key_source.identifier)) : true
-    error_message = "Name for SSM parameter does not appear to be valid format, acceptable characters are `a-zA-Z0-9_.-` and `/` to delineate hierarchies"
+    error_message = "Name for SSM parameter does not appear to be valid format, acceptable characters are `a-zA-Z0-9_.-` and `/` to delineate hierarchies."
   }
 }
 
@@ -182,6 +182,6 @@ variable "forwarder_lambda_datadog_host" {
   default     = "datadoghq.com"
   validation {
     condition     = contains(["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"], var.forwarder_lambda_datadog_host)
-    error_message = "Invalid host: possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com` and `ddog-gov.com`"
+    error_message = "Invalid host: possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com` and `ddog-gov.com`."
   }
 }
