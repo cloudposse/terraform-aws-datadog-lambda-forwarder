@@ -49,7 +49,6 @@ resource "aws_lambda_function" "forwarder_log" {
   source_code_hash               = module.forwarder_log_artifact[0].base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
-  tags                           = module.forwarder_log_label.tags
 
   dynamic "vpc_config" {
     for_each = try(length(var.subnet_ids), 0) > 0 && try(length(var.security_group_ids), 0) > 0 ? [true] : []
@@ -66,6 +65,8 @@ resource "aws_lambda_function" "forwarder_log" {
   tracing_config {
     mode = var.tracing_config_mode
   }
+
+  tags = module.forwarder_log_label.tags
 }
 
 resource "aws_lambda_permission" "allow_s3_bucket" {
