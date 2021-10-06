@@ -1,25 +1,30 @@
-# The Datadog lambda forwarder is an entirely different code whithing the same repo and without a release, the code is here:
+# The Datadog Lambda RDS enhanced monitoring code:
 # https://github.com/DataDog/datadog-serverless-functions/blob/master/aws/rds_enhanced_monitoring/lambda_function.py
-# This code can only read RDS Enhanced monitoring metrics from cloudwatch and nothing else.
-# if you'd like to read the Auth log from an Aurora cluster, you need to use the lambda-log and pass the Cloudwatch group of the cluster/clusters
+# This code can only read RDS Enhanced monitoring metrics from CloudWatch and nothing else.
+# If you'd like to read the Auth log from an Aurora cluster, you need to use the `lambda-log` Lambda function and pass the CloudWatch Group of the cluster/clusters
 
 locals {
-  forwarder_rds_artifact_url = var.forwarder_rds_artifact_url != null ? var.forwarder_rds_artifact_url : "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/rds_enhanced_monitoring/lambda_function.py?ref=${var.dd_forwarder_version}"
+  forwarder_rds_artifact_url = var.forwarder_rds_artifact_url != null ? var.forwarder_rds_artifact_url : (
+    "https://raw.githubusercontent.com/DataDog/datadog-serverless-functions/master/aws/rds_enhanced_monitoring/lambda_function.py?ref=${var.dd_forwarder_version}"
+  )
 }
+
 module "forwarder_rds_label" {
-  count      = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
-  source     = "cloudposse/label/null"
-  version    = "0.24.1" # requires Terraform >= 0.13.0
-  attributes = ["forwarder-rds"]
+  source  = "cloudposse/label/null"
+  version = "0.25.0"
+
+  enabled = local.lambda_enabled && var.forwarder_rds_enabled
+
+  attributes = ["rds"]
 
   context = module.this.context
 }
 
 module "forwarder_rds_artifact" {
-  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+  count   = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+  source  = "cloudposse/module-artifact/external"
+  version = "0.7.0"
 
-  source      = "cloudposse/module-artifact/external"
-  version     = "0.7.0"
   filename    = "forwarder-rds.py"
   module_name = var.dd_module_name
   module_path = path.module
@@ -33,6 +38,31 @@ data "archive_file" "forwarder_rds" {
   output_path = "${path.module}/lambda.zip"
 }
 
+resource "aws_iam_role" "lambda_forwarder_rds" {
+  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+
+  name               = module.forwarder_rds_label.id
+  description        = "Datadog Lambda RDS enhanced monitoring forwarder"
+  assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
+  tags               = module.forwarder_rds_label.tags
+}
+
+resource "aws_iam_policy" "lambda_forwarder_rds" {
+  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+
+  name        = module.forwarder_rds_label.id
+  description = "Datadog Lambda RDS enhanced monitoring forwarder"
+  policy      = data.aws_iam_policy_document.lambda_default[0].json
+  tags        = module.forwarder_rds_label.tags
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_forwarder_rds" {
+  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+
+  role       = aws_iam_role.lambda_forwarder_rds[0].name
+  policy_arn = aws_iam_policy.lambda_forwarder_rds[0].arn
+}
+
 ######################################################################
 ## Create lambda function
 
@@ -41,15 +71,14 @@ resource "aws_lambda_function" "forwarder_rds" {
 
   #checkov:skip=BC_AWS_GENERAL_64: (Pertaining to Lambda DLQ) Vendor lambda does not have a means to reprocess failed events.
 
-  description                    = "Datadog forwarder for RDS enhanced monitoring."
+  description                    = "Datadog forwarder for RDS enhanced monitoring"
   filename                       = data.archive_file.forwarder_rds[0].output_path
-  function_name                  = module.forwarder_rds_label[0].id
-  role                           = aws_iam_role.lambda[0].arn
+  function_name                  = module.forwarder_rds_label.id
+  role                           = aws_iam_role.lambda_forwarder_rds[0].arn
   handler                        = "forwarder-rds.lambda_handler"
   source_code_hash               = data.archive_file.forwarder_rds[0].output_base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
-  tags                           = module.forwarder_rds_label[0].tags
 
   dynamic "vpc_config" {
     for_each = try(length(var.subnet_ids), 0) > 0 && try(length(var.security_group_ids), 0) > 0 ? [true] : []
@@ -66,9 +95,11 @@ resource "aws_lambda_function" "forwarder_rds" {
   tracing_config {
     mode = var.tracing_config_mode
   }
+
+  tags = module.forwarder_rds_label.tags
 }
 
-resource "aws_lambda_permission" "cloudwatch_enhance_rds" {
+resource "aws_lambda_permission" "cloudwatch_enhanced_rds_monitoring" {
   count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
 
   statement_id  = "datadog-forwarder-rds-cloudwatch-logs-permission"
@@ -80,20 +111,18 @@ resource "aws_lambda_permission" "cloudwatch_enhance_rds" {
 
 resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter_rds" {
   count           = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
-  name            = module.forwarder_rds_label[0].id
+  name            = module.forwarder_rds_label.id
   log_group_name  = "RDSOSMetrics"
   destination_arn = aws_lambda_function.forwarder_rds[0].arn
   filter_pattern  = ""
 }
 
 resource "aws_cloudwatch_log_group" "forwarder_rds" {
-
   count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
 
   name              = "/aws/lambda/${aws_lambda_function.forwarder_rds[0].function_name}"
   retention_in_days = var.forwarder_log_retention_days
+  kms_key_id        = var.kms_key_id
 
-  kms_key_id = var.kms_key_id
-
-  tags = module.forwarder_rds_label[0].tags
+  tags = module.forwarder_rds_label.tags
 }

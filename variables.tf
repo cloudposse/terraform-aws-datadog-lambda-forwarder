@@ -1,11 +1,11 @@
 variable "subnet_ids" {
-  description = "List of subnet IDs to use when running in a specific VPC."
+  description = "List of subnet IDs to use when deploying the Lambda Function in a VPC"
   type        = list(string)
   default     = null
 }
 
 variable "security_group_ids" {
-  description = "List of security group IDs used when Lambda Function should run in the VPC"
+  description = "List of security group IDs to use when the Lambda Function runs in a VPC"
   type        = list(string)
   default     = null
 }
@@ -13,7 +13,7 @@ variable "security_group_ids" {
 #https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html
 variable "lambda_reserved_concurrent_executions" {
   type        = number
-  description = "Amount of reserved concurrent executions for this lambda function. A value of 0 disables lambda from being triggered and -1 removes any concurrency limitations. Defaults to Unreserved Concurrency Limits -1."
+  description = "Amount of reserved concurrent executions for the lambda function. A value of 0 disables Lambda from being triggered and -1 removes any concurrency limitations. Defaults to Unreserved Concurrency Limits -1"
   default     = -1
 }
 
@@ -25,12 +25,12 @@ variable "lambda_runtime" {
 
 variable "tracing_config_mode" {
   type        = string
-  description = "Can be either PassThrough or Active. If PassThrough, Lambda will only trace the request from an upstream service if it contains a tracing header with 'sampled=1'. If Active, Lambda will respect any tracing header it receives from an upstream service."
+  description = "Can be either PassThrough or Active. If PassThrough, Lambda will only trace the request from an upstream service if it contains a tracing header with 'sampled=1'. If Active, Lambda will respect any tracing header it receives from an upstream service"
   default     = "PassThrough"
 }
 
 variable "dd_api_key_source" {
-  description = "One of: ARN for AWS Secrets Manager (asm) to retrieve the Datadog (DD) api key, ARN for the KMS (kms) key used to decrypt the ciphertext_blob of the api key, or the name of the SSM (ssm) parameter used to retrieve the Datadog API key."
+  description = "One of: ARN for AWS Secrets Manager (asm) to retrieve the Datadog (DD) api key, ARN for the KMS (kms) key used to decrypt the ciphertext_blob of the api key, or the name of the SSM (ssm) parameter used to retrieve the Datadog API key"
   type = object({
     resource   = string
     identifier = string
@@ -87,7 +87,7 @@ variable "dd_module_name" {
 variable "dd_forwarder_version" {
   type        = string
   description = "Version tag of Datadog lambdas to use. https://github.com/DataDog/datadog-serverless-functions/releases"
-  default     = "3.34.0"
+  default     = "3.39.0"
 }
 
 variable "forwarder_log_enabled" {
@@ -116,7 +116,7 @@ variable "forwarder_log_retention_days" {
 
 variable "kms_key_id" {
   type        = string
-  description = "Optional KMS key ID to encrypt Datadog lambda function logs"
+  description = "Optional KMS key ID to encrypt Datadog Lambda function logs"
   default     = null
 }
 
@@ -135,50 +135,50 @@ variable "s3_bucket_kms_arns" {
 variable "cloudwatch_forwarder_log_groups" {
   type        = map(string)
   description = <<EOT
-    "Map of Cloudwatch log groups that the lambda forwarder will send logs from. example { mysql1 = "/aws/rds/maincluster"}"
+    "Map of Cloudwatch Log Groups that the Lambda forwarder will send logs from. For example: { mysql1 = "/aws/rds/maincluster"}"
     EOT
   default     = {}
 }
 
 variable "forwarder_lambda_debug_enabled" {
   type        = bool
-  description = "Whether to enable or disable debug for the lambda forwarder"
+  description = "Whether to enable or disable debug for the Lambda forwarder"
   default     = false
 }
 
 variable "vpclogs_cloudwatch_log_group" {
   type        = string
-  description = "The name of the Cloudwatch Log Group for VPC flow logs"
+  description = "The name of the CloudWatch Log Group for VPC flow logs"
   default     = null
 }
 
 variable "forwarder_rds_artifact_url" {
   type        = string
-  description = "The url for the code of the Datadog forwarder RDS, it can be a local file, url or git repo"
+  description = "The URL for the code of the Datadog forwarder for RDS. It can be a local file, url or git repo"
   default     = null
 }
 
 variable "forwarder_vpc_logs_artifact_url" {
   type        = string
-  description = "The url for the code of the Datadog forwarder VPC Logs, it can be a local file, url or git repo"
+  description = "The URL for the code of the Datadog forwarder for VPC Logs. It can be a local file, url or git repo"
   default     = null
 }
 
 variable "forwarder_log_artifact_url" {
   type        = string
-  description = "The url for the code of the Datadog forwarder Log, it can be a local file, url or git repo"
+  description = "The URL for the code of the Datadog forwarder for Logs. It can be a local file, URL or git repo"
   default     = null
 }
 
 variable "lambda_policy_source_json" {
   type        = string
-  description = "Additional IAM policy document that can optionally be passed and merged with exported document"
+  description = "Additional IAM policy document that can optionally be passed and merged with the created policy document"
   default     = ""
 }
 
 variable "forwarder_lambda_datadog_host" {
   type        = string
-  description = "Define your Datadog Site to send data to. Possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com` and `ddog-gov.com`"
+  description = "Datadog Site to send data to. Possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com` and `ddog-gov.com`"
   default     = "datadoghq.com"
   validation {
     condition     = contains(["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"], var.forwarder_lambda_datadog_host)

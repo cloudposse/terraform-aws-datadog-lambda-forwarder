@@ -17,7 +17,7 @@ license: "APACHE2"
 copyrights:
   - name: "Cloud Posse, LLC"
     url: "https://cloudposse.com"
-    year: "2020"
+    year: "2021"
 
 # Canonical GitHub repo
 github_repo: cloudposse/terraform-aws-datadog-lambda-forwarder
@@ -95,13 +95,13 @@ usage: |-
       postgres =  "/aws/rds/cluster/pg-main/postgresql"
   }
   ```
-  To enable Datadog forwarder for VPC Flow Log CloudWatch logs:
+  To enable Datadog forwarder for VPC Flow Logs CloudWatch logs:
   ```hcl
   module "datadog_lambda_forwarder" {
     source = "cloudposse/datadog-lambda-forwarder/aws"
     forwarder_vpc_logs_enabled = true
     vpclogs_cloudwatch_log_group = {
-      vpc1 =  "/aws/vpc/flowlogs/vpc12"
+      vpc1 =  "/aws/vpc/flowlogs/vpc1"
     }
 
   ```
@@ -135,3 +135,7 @@ contributors:
     github: "jamengual"
   - name: "RB"
     github: "nitrocode"
+  - name: "Erik Osterman"
+    github: "osterman"
+  - name: "Andriy Knysh"
+    github: "aknysh"

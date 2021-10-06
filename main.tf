@@ -12,7 +12,7 @@ data "aws_region" "current" {
 
 locals {
   enabled               = module.this.enabled
-  arn_format            = "arn:${data.aws_partition.current[0].partition}"
+  arn_format            = local.enabled ? "arn:${data.aws_partition.current[0].partition}" : ""
   aws_account_id        = join("", data.aws_caller_identity.current.*.account_id)
   aws_region            = join("", data.aws_region.current.*.name)
   lambda_enabled        = local.enabled
@@ -36,18 +36,10 @@ data "aws_ssm_parameter" "api_key" {
   name  = local.dd_api_key_identifier
 }
 
-module "lambda_label" {
-  source     = "cloudposse/label/null"
-  version    = "0.24.1" # requires Terraform >= 0.13.0
-  attributes = ["forwarder-lambda"]
-
-  context = module.this.context
-}
-
 ######################################################################
-## Create a policy document to assume role and a lambda role
+## Create a policy document to allow Lambda to assume role
 
-data "aws_iam_policy_document" "assume" {
+data "aws_iam_policy_document" "assume_role" {
   count = local.lambda_enabled ? 1 : 0
 
   statement {
@@ -64,21 +56,13 @@ data "aws_iam_policy_document" "assume" {
   }
 }
 
-resource "aws_iam_role" "lambda" {
-  count = local.lambda_enabled ? 1 : 0
-
-  name               = module.lambda_label.id
-  assume_role_policy = data.aws_iam_policy_document.assume[0].json
-  tags               = module.lambda_label.tags
-}
-
 ######################################################################
 ## Create Lambda policy and attach it to the Lambda role
 
-data "aws_iam_policy_document" "lambda" {
+data "aws_iam_policy_document" "lambda_default" {
   count = local.lambda_enabled ? 1 : 0
 
-  # #checkov:skip=BC_AWS_IAM_57: (Pertaining to contstraining IAM write access) This policy has not write access and is restricted to one specific ARN.
+  # #checkov:skip=BC_AWS_IAM_57: (Pertaining to constraining IAM write access) This policy has not write access and is restricted to one specific ARN.
 
   source_json = var.lambda_policy_source_json
 
@@ -90,7 +74,7 @@ data "aws_iam_policy_document" "lambda" {
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
-      "logs:PutLogEvents",
+      "logs:PutLogEvents"
     ]
 
     resources = ["*"]
@@ -105,20 +89,4 @@ data "aws_iam_policy_document" "lambda" {
 
     resources = [local.dd_api_key_arn]
   }
-
-}
-
-resource "aws_iam_policy" "lambda" {
-  count = local.lambda_enabled ? 1 : 0
-
-  name        = module.lambda_label.id
-  description = "Allow put logs and access to Datadog API key"
-  policy      = data.aws_iam_policy_document.lambda[0].json
-}
-
-resource "aws_iam_role_policy_attachment" "lambda" {
-  count = local.lambda_enabled ? 1 : 0
-
-  role       = aws_iam_role.lambda[0].name
-  policy_arn = aws_iam_policy.lambda[0].arn
 }
