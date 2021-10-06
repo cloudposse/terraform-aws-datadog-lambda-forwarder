@@ -47,7 +47,7 @@ module "lambda_label" {
 ######################################################################
 ## Create a policy document to allow Lambda to assume role
 
-data "aws_iam_policy_document" "assume" {
+data "aws_iam_policy_document" "assume_role" {
   count = local.lambda_enabled ? 1 : 0
 
   statement {
@@ -68,8 +68,8 @@ resource "aws_iam_role" "lambda" {
   count = local.lambda_enabled ? 1 : 0
 
   name               = module.lambda_label.id
-  description        = "Lambda Forwarder role"
-  assume_role_policy = data.aws_iam_policy_document.assume[0].json
+  description        = "Datadog Lambda Forwarder IAM role"
+  assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
   tags               = module.lambda_label.tags
 }
 
@@ -79,7 +79,7 @@ resource "aws_iam_role" "lambda" {
 data "aws_iam_policy_document" "lambda" {
   count = local.lambda_enabled ? 1 : 0
 
-  # #checkov:skip=BC_AWS_IAM_57: (Pertaining to contstraining IAM write access) This policy has not write access and is restricted to one specific ARN.
+  # #checkov:skip=BC_AWS_IAM_57: (Pertaining to constraining IAM write access) This policy has not write access and is restricted to one specific ARN.
 
   source_json = var.lambda_policy_source_json
 
@@ -91,7 +91,7 @@ data "aws_iam_policy_document" "lambda" {
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
-      "logs:PutLogEvents",
+      "logs:PutLogEvents"
     ]
 
     resources = ["*"]
@@ -112,7 +112,7 @@ resource "aws_iam_policy" "lambda" {
   count = local.lambda_enabled ? 1 : 0
 
   name        = module.lambda_label.id
-  description = "Allow Lambda Forwarder to write logs and access and decrypt the Datadog API key"
+  description = "Allow Datadog Lambda Forwarder to write logs and access and decrypt the Datadog API key"
   policy      = data.aws_iam_policy_document.lambda[0].json
   tags        = module.lambda_label.tags
 }
