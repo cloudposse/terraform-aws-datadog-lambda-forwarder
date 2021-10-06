@@ -6,6 +6,13 @@ module "cloudwatch_logs" {
   context = module.this.context
 }
 
+resource "aws_ssm_parameter" "datadog_key" {
+  name        = "/datadog/datadog_api_key"
+  description = "Test Datadog key"
+  type        = "SecureString"
+  value       = "testkey"
+}
+
 module "datadog_lambda_log_forwarder" {
   source = "../.."
 

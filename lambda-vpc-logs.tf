@@ -55,7 +55,7 @@ resource "aws_iam_policy" "lambda_forwarder_vpclogs" {
   tags        = module.forwarder_vpclogs_label.tags
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_forwarder_rds" {
+resource "aws_iam_role_policy_attachment" "lambda_forwarder_vpclogs" {
   count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
 
   role       = aws_iam_role.lambda_forwarder_vpclogs[0].name
