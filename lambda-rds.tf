@@ -79,6 +79,7 @@ resource "aws_lambda_function" "forwarder_rds" {
   source_code_hash               = data.archive_file.forwarder_rds[0].output_base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
+  layers                         = var.forwarder_rds_layers
 
   dynamic "vpc_config" {
     for_each = try(length(var.subnet_ids), 0) > 0 && try(length(var.security_group_ids), 0) > 0 ? [true] : []
@@ -94,6 +95,10 @@ resource "aws_lambda_function" "forwarder_rds" {
 
   tracing_config {
     mode = var.tracing_config_mode
+  }
+
+  lifecycle {
+    ignore_changes = [last_modified]
   }
 
   tags = module.forwarder_rds_label.tags

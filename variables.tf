@@ -185,3 +185,21 @@ variable "forwarder_lambda_datadog_host" {
     error_message = "Invalid host: possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com` and `ddog-gov.com`."
   }
 }
+
+variable "forwarder_log_layers" {
+  type        = list(string)
+  description = "List of Lambda Layer Version ARNs (maximum of 5) to attach to Datadog log forwarder lambda function"
+  default     = []
+}
+
+variable "forwarder_rds_layers" {
+  type        = list(string)
+  description = "List of Lambda Layer Version ARNs (maximum of 5) to attach to Datadog RDS enhanced monitoring lambda function"
+  default     = []
+}
+
+variable "forwarder_vpc_logs_layers" {
+  type        = list(string)
+  description = "List of Lambda Layer Version ARNs (maximum of 5) to attach to Datadog VPC flow log forwarder lambda function"
+  default     = []
+}

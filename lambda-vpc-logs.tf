@@ -38,7 +38,7 @@ data "archive_file" "forwarder_vpclogs" {
 }
 
 resource "aws_iam_role" "lambda_forwarder_vpclogs" {
-  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+  count = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
 
   name               = module.forwarder_vpclogs_label.id
   description        = "Datadog Lambda VPC Flow Logs forwarder"
@@ -47,7 +47,7 @@ resource "aws_iam_role" "lambda_forwarder_vpclogs" {
 }
 
 resource "aws_iam_policy" "lambda_forwarder_vpclogs" {
-  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+  count = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
 
   name        = module.forwarder_vpclogs_label.id
   description = "Datadog Lambda VPC Flow Logs forwarder"
@@ -56,7 +56,7 @@ resource "aws_iam_policy" "lambda_forwarder_vpclogs" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_forwarder_vpclogs" {
-  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+  count = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
 
   role       = aws_iam_role.lambda_forwarder_vpclogs[0].name
   policy_arn = aws_iam_policy.lambda_forwarder_vpclogs[0].arn
@@ -78,6 +78,7 @@ resource "aws_lambda_function" "forwarder_vpclogs" {
   source_code_hash               = data.archive_file.forwarder_vpclogs[0].output_base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
+  layers                         = var.forwarder_vpc_logs_layers
 
   dynamic "vpc_config" {
     for_each = try(length(var.subnet_ids), 0) > 0 && try(length(var.security_group_ids), 0) > 0 ? [true] : []
@@ -93,6 +94,10 @@ resource "aws_lambda_function" "forwarder_vpclogs" {
 
   tracing_config {
     mode = var.tracing_config_mode
+  }
+
+  lifecycle {
+    ignore_changes = [last_modified]
   }
 
   tags = module.forwarder_vpclogs_label.tags
