@@ -85,6 +85,7 @@ resource "aws_lambda_function" "forwarder_log" {
   source_code_hash               = module.forwarder_log_artifact[0].base64sha256
   runtime                        = var.lambda_runtime
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
+  layers                         = var.forwarder_log_layers
 
   dynamic "vpc_config" {
     for_each = try(length(var.subnet_ids), 0) > 0 && try(length(var.security_group_ids), 0) > 0 ? [true] : []
@@ -100,6 +101,10 @@ resource "aws_lambda_function" "forwarder_log" {
 
   tracing_config {
     mode = var.tracing_config_mode
+  }
+
+  lifecycle {
+    ignore_changes = [last_modified]
   }
 
   tags = module.forwarder_log_label.tags
@@ -154,17 +159,18 @@ data "aws_iam_policy_document" "s3_log_bucket" {
   }
 }
 
-resource "aws_iam_policy" "datadog_s3" {
+resource "aws_iam_policy" "lambda_forwarder_log_s3" {
   count       = local.s3_logs_enabled ? 1 : 0
   name        = module.forwarder_log_s3_label.id
   description = "Allow Datadog Lambda Logs Forwarder to access S3 buckets"
   policy      = join("", data.aws_iam_policy_document.s3_log_bucket.*.json)
+  tags        = module.forwarder_log_s3_label.tags
 }
 
 resource "aws_iam_role_policy_attachment" "datadog_s3" {
   count      = local.s3_logs_enabled ? 1 : 0
   role       = join("", aws_iam_role.lambda_forwarder_log.*.name)
-  policy_arn = join("", aws_iam_policy.datadog_s3.*.arn)
+  policy_arn = join("", aws_iam_policy.lambda_forwarder_log_s3.*.arn)
 }
 
 # Lambda Forwarder logs
