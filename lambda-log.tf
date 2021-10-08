@@ -4,7 +4,7 @@
 # Refer to the table here https://docs.datadoghq.com/logs/guide/send-aws-services-logs-with-the-datadog-lambda-function/?tab=awsconsole#automatically-set-up-triggers
 
 locals {
-  s3_logs_enabled = local.lambda_enabled && var.s3_buckets != null && var.forwarder_log_enabled ? true : false
+  s3_logs_enabled = local.lambda_enabled && var.forwarder_log_enabled && var.s3_buckets != null ? true : false
 
   forwarder_log_artifact_url = var.forwarder_log_artifact_url != null ? var.forwarder_log_artifact_url : (
     "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-${var.dd_forwarder_version}/${var.dd_artifact_filename}-${var.dd_forwarder_version}.zip"
@@ -18,6 +18,17 @@ module "forwarder_log_label" {
   enabled = local.lambda_enabled && var.forwarder_log_enabled
 
   attributes = ["logs"]
+
+  context = module.this.context
+}
+
+module "forwarder_log_s3_label" {
+  source  = "cloudposse/label/null"
+  version = "0.25.0"
+
+  enabled = local.lambda_enabled && local.s3_logs_enabled
+
+  attributes = ["logs-s3"]
 
   context = module.this.context
 }
@@ -145,8 +156,8 @@ data "aws_iam_policy_document" "s3_log_bucket" {
 
 resource "aws_iam_policy" "datadog_s3" {
   count       = local.s3_logs_enabled ? 1 : 0
-  name        = module.forwarder_log_label.id
-  description = "Policy with permissions for Datadog Lambda Forwarder to access S3 buckets"
+  name        = module.forwarder_log_s3_label.id
+  description = "Allow Datadog Lambda Logs Forwarder to access S3 buckets"
   policy      = join("", data.aws_iam_policy_document.s3_log_bucket.*.json)
 }
 
