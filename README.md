@@ -130,9 +130,8 @@ To enable Datadog forwarder for VPC Flow Logs CloudWatch logs:
 module "datadog_lambda_forwarder" {
   source = "cloudposse/datadog-lambda-forwarder/aws"
   forwarder_vpc_logs_enabled = true
-  vpclogs_cloudwatch_log_group = {
-    vpc1 =  "/aws/vpc/flowlogs/vpc1"
-  }
+  vpclogs_cloudwatch_log_group = "/aws/vpc/flowlogs/vpc1"
+}
 
 ```
 
@@ -142,6 +141,7 @@ module "datadog_lambda_forwarder" {
   source = "cloudposse/datadog-lambda-forwarder/aws"
   forwarder_rds_enabled = true
   forwarder_rds_artifact_url = "${file("${path.module}/function.zip")}"
+}
 ```
 
 
