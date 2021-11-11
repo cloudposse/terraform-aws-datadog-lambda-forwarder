@@ -74,46 +74,66 @@ usage: |-
   ```hcl
   module "datadog_lambda_forwarder" {
     source = "cloudposse/datadog-lambda-forwarder/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version = "x.x.x"
+
     forwarder_rds_enabled = true
   }
   ```
+
   To enable Datadog forwarder for a CloudTrail S3 bucket:
   ```hcl
   module "datadog_lambda_forwarder" {
     source = "cloudposse/datadog-lambda-forwarder/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version = "x.x.x"
+
     forwarder_log_enabled = true
-    s3_buckets = ["cloudtrail-audit-bucket"]
-    s3_bucket_kms_arns = ["arn:aws:kms:us-west-2:1234567890:key/b204f3d2-1111-2222-94333332-4444ccc222"]
+    s3_buckets            = ["cloudtrail-audit-bucket"]
+    s3_bucket_kms_arns    = ["arn:aws:kms:us-west-2:1234567890:key/b204f3d2-1111-2222-94333332-4444ccc222"]
   }
   ```
+
   To enable Datadog forwarder for RDS authentication CloudWatch logs:
   ```hcl
   module "datadog_lambda_forwarder" {
     source = "cloudposse/datadog-lambda-forwarder/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version = "x.x.x"
+
     forwarder_log_enabled = true
     cloudwatch_forwarder_log_groups = {
-      postgres =  "/aws/rds/cluster/pg-main/postgresql"
+      postgres = {
+        name           = "/aws/rds/cluster/pg-main/postgresql"
+        filter_pattern = ""
+      }
+    }
   }
   ```
+
   To enable Datadog forwarder for VPC Flow Logs CloudWatch logs:
   ```hcl
   module "datadog_lambda_forwarder" {
     source = "cloudposse/datadog-lambda-forwarder/aws"
-    forwarder_vpc_logs_enabled = true
+    # Cloud Posse recommends pinning every module to a specific version
+    # version = "x.x.x"
+
+    forwarder_vpc_logs_enabled   = true
     vpclogs_cloudwatch_log_group = "/aws/vpc/flowlogs/vpc1"
   }
-
   ```
 
   To use a local copy of the lambda code you can specify the artifact url:
   ```hcl
   module "datadog_lambda_forwarder" {
     source = "cloudposse/datadog-lambda-forwarder/aws"
-    forwarder_rds_enabled = true
-    forwarder_rds_artifact_url = "${file("${path.module}/function.zip")}"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version = "x.x.x"
+
+    forwarder_rds_enabled      = true
+    forwarder_rds_artifact_url = file("${path.module}/function.zip")
   }
   ```
-
 
 # Example usage
 examples: |-
