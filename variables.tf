@@ -135,7 +135,7 @@ variable "s3_bucket_kms_arns" {
 variable "cloudwatch_forwarder_log_groups" {
   type        = map(map(string))
   description = <<EOT
-    Map of Cloudwatch Log Groups that the Lambda forwarder will send logs from. For example: { mysql1 = { name = "/aws/rds/maincluster", filter_pattern = "" }
+    Map of CloudWatch Log Groups with a filter pattern that the Lambda forwarder will send logs from. For example: { mysql1 = { name = "/aws/rds/maincluster", filter_pattern = "" }
     EOT
   default     = {}
 }
