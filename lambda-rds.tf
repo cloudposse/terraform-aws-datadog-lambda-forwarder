@@ -119,7 +119,7 @@ resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filt
   name            = module.forwarder_rds_label.id
   log_group_name  = "RDSOSMetrics"
   destination_arn = aws_lambda_function.forwarder_rds[0].arn
-  filter_pattern  = ""
+  filter_pattern  = var.forwarder_rds_filter_pattern
 }
 
 resource "aws_cloudwatch_log_group" "forwarder_rds" {
