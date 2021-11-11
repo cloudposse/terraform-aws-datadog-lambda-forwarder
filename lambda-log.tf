@@ -193,7 +193,7 @@ resource "aws_lambda_permission" "cloudwatch_groups" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.forwarder_log[0].function_name
   principal     = "logs.${local.aws_region}.amazonaws.com"
-  source_arn    = "${local.arn_format}:logs:${local.aws_region}:${local.aws_account_id}:log-group:${each.value}:*"
+  source_arn    = "${local.arn_format}:logs:${local.aws_region}:${local.aws_account_id}:log-group:${each.value.name}:*"
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_log_subscription_filter" {
@@ -202,5 +202,5 @@ resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_log_subscription_f
   name            = module.forwarder_log_label.id
   log_group_name  = each.value.name
   destination_arn = aws_lambda_function.forwarder_log[0].arn
-  filter_pattern  = each.value.pattern
+  filter_pattern  = each.value.filter_pattern
 }
