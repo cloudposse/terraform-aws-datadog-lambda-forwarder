@@ -212,6 +212,6 @@ variable "forwarder_rds_filter_pattern" {
 
 variable "forwarder_vpclogs_filter_pattern" {
   type        = string
-  description = "Filter pattern for lambda forwarder VPC Logs"
+  description = "Filter pattern for Lambda forwarder VPC Logs"
   default     = ""
 }
