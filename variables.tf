@@ -215,3 +215,9 @@ variable "forwarder_vpclogs_filter_pattern" {
   description = "Filter pattern for Lambda forwarder VPC Logs"
   default     = ""
 }
+
+variable "dd_tags" {
+  type = list(string)
+  description = "A list of Datadog tags to apply to all logs forwarded to Datadog"
+  default = []
+}
