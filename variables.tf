@@ -203,3 +203,15 @@ variable "forwarder_vpc_logs_layers" {
   description = "List of Lambda Layer Version ARNs (maximum of 5) to attach to Datadog VPC flow log forwarder lambda function"
   default     = []
 }
+
+variable "forwarder_rds_filter_pattern" {
+  type        = string
+  description = "Filter pattern for lambda forwarder RDS"
+  default     = ""
+}
+
+variable "forwarder_vpclogs_filter_pattern" {
+  type        = string
+  description = "Filter pattern for lambda forwarder VPC Logs"
+  default     = ""
+}
