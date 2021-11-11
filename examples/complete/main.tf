@@ -19,7 +19,10 @@ module "datadog_lambda_log_forwarder" {
   forwarder_log_enabled = true
 
   cloudwatch_forwarder_log_groups = {
-    postgres = module.cloudwatch_logs.log_group_name
+    postgres = {
+      name           = module.cloudwatch_logs.log_group_name
+      filter_pattern = ""
+    }
   }
 
   dd_api_key_source = var.dd_api_key_source
