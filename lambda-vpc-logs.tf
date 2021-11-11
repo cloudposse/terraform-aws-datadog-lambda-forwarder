@@ -118,7 +118,7 @@ resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filt
   name            = module.forwarder_vpclogs_label.id
   log_group_name  = var.vpclogs_cloudwatch_log_group
   destination_arn = aws_lambda_function.forwarder_vpclogs[0].arn
-  filter_pattern  = ""
+  filter_pattern  = var.forwarder_vpclogs_filter_pattern
 }
 
 resource "aws_cloudwatch_log_group" "forwarder_vpclogs" {

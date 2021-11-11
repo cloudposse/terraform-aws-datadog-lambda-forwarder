@@ -133,9 +133,9 @@ variable "s3_bucket_kms_arns" {
 }
 
 variable "cloudwatch_forwarder_log_groups" {
-  type        = map(string)
+  type        = map(map(string))
   description = <<EOT
-    "Map of Cloudwatch Log Groups that the Lambda forwarder will send logs from. For example: { mysql1 = "/aws/rds/maincluster"}"
+    Map of CloudWatch Log Groups with a filter pattern that the Lambda forwarder will send logs from. For example: { mysql1 = { name = "/aws/rds/maincluster", filter_pattern = "" }
     EOT
   default     = {}
 }
@@ -202,4 +202,16 @@ variable "forwarder_vpc_logs_layers" {
   type        = list(string)
   description = "List of Lambda Layer Version ARNs (maximum of 5) to attach to Datadog VPC flow log forwarder lambda function"
   default     = []
+}
+
+variable "forwarder_rds_filter_pattern" {
+  type        = string
+  description = "Filter pattern for Lambda forwarder RDS"
+  default     = ""
+}
+
+variable "forwarder_vpclogs_filter_pattern" {
+  type        = string
+  description = "Filter pattern for Lambda forwarder VPC Logs"
+  default     = ""
 }
