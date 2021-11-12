@@ -25,8 +25,9 @@ locals {
   dd_api_key_asm         = local.dd_api_key_resource == "asm" ? { DD_API_KEY_SECRET_ARN = local.dd_api_key_identifier } : {}
   dd_api_key_ssm         = local.dd_api_key_resource == "ssm" ? { DD_API_KEY_SSM_NAME = local.dd_api_key_identifier } : {}
   dd_site                = { DD_SITE = var.forwarder_lambda_datadog_host }
+  dd_tags                = { DD_TAGS = join(",", var.dd_tags) }
   lambda_debug           = var.forwarder_lambda_debug_enabled ? { DD_LOG_LEVEL = "debug" } : {}
-  lambda_env             = merge(local.dd_api_key_kms, local.dd_api_key_asm, local.dd_api_key_ssm, local.dd_site, local.lambda_debug)
+  lambda_env             = merge(local.dd_api_key_kms, local.dd_api_key_asm, local.dd_api_key_ssm, local.dd_site, local.lambda_debug, local.dd_tags)
 }
 
 # Log Forwarder, RDS Enhanced Forwarder, VPC Flow Log Forwarder
