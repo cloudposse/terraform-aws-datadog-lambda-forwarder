@@ -198,7 +198,7 @@ resource "aws_lambda_permission" "cloudwatch_groups" {
 
 data "aws_cloudwatch_log_group" "cloudwatch_log_group" {
   for_each = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_log_groups : {}
-  
+
   name = each.value.name
 }
 
