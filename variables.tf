@@ -224,3 +224,9 @@ variable "dd_tags" {
   description = "A list of Datadog tags to apply to all logs forwarded to Datadog"
   default     = []
 }
+
+variable "dd_tags_map" {
+  type        = map(string)
+  description = "A map of Datadog tags to apply to all logs forwarded to Datadog. This will override dd_tags."
+  default     = {}
+}
