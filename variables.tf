@@ -10,7 +10,13 @@ variable "security_group_ids" {
   default     = null
 }
 
-#https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html
+# https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html
+variable "lambda_memory_size" {
+  type        = number
+  description = "Amount of memory in MB your Lambda Function can use at runtime"
+  default     = 128
+}
+
 variable "lambda_reserved_concurrent_executions" {
   type        = number
   description = "Amount of reserved concurrent executions for the lambda function. A value of 0 disables Lambda from being triggered and -1 removes any concurrency limitations. Defaults to Unreserved Concurrency Limits -1"
@@ -21,6 +27,12 @@ variable "lambda_runtime" {
   type        = string
   description = "Runtime environment for Datadog Lambda"
   default     = "python3.7"
+}
+
+variable "lambda_timeout" {
+  type        = number
+  description = "Amount of time your Datadog Lambda Function has to run in seconds"
+  default     = 120
 }
 
 variable "tracing_config_mode" {
