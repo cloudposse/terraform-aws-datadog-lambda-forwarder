@@ -78,6 +78,8 @@ resource "aws_lambda_function" "forwarder_rds" {
   handler                        = "forwarder-rds.lambda_handler"
   source_code_hash               = data.archive_file.forwarder_rds[0].output_base64sha256
   runtime                        = var.lambda_runtime
+  memory_size                    = var.lambda_memory_size
+  timeout                        = var.lambda_timeout
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
   layers                         = var.forwarder_rds_layers
 

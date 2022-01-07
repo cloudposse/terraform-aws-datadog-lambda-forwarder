@@ -84,6 +84,8 @@ resource "aws_lambda_function" "forwarder_log" {
   handler                        = "lambda_function.lambda_handler"
   source_code_hash               = module.forwarder_log_artifact[0].base64sha256
   runtime                        = var.lambda_runtime
+  memory_size                    = var.lambda_memory_size
+  timeout                        = var.lambda_timeout
   reserved_concurrent_executions = var.lambda_reserved_concurrent_executions
   layers                         = var.forwarder_log_layers
 
