@@ -40,10 +40,11 @@ data "archive_file" "forwarder_vpclogs" {
 resource "aws_iam_role" "lambda_forwarder_vpclogs" {
   count = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
 
-  name               = module.forwarder_vpclogs_label.id
-  description        = "Datadog Lambda VPC Flow Logs forwarder"
-  assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
-  tags               = module.forwarder_vpclogs_label.tags
+  name                 = module.forwarder_vpclogs_label.id
+  description          = "Datadog Lambda VPC Flow Logs forwarder"
+  assume_role_policy   = data.aws_iam_policy_document.assume_role[0].json
+  permissions_boundary = var.permissions_boundary
+  tags                 = module.forwarder_vpclogs_label.tags
 }
 
 resource "aws_iam_policy" "lambda_forwarder_vpclogs" {

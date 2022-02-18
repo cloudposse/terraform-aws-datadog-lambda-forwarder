@@ -41,10 +41,11 @@ data "archive_file" "forwarder_rds" {
 resource "aws_iam_role" "lambda_forwarder_rds" {
   count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
 
-  name               = module.forwarder_rds_label.id
-  description        = "Datadog Lambda RDS enhanced monitoring forwarder"
-  assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
-  tags               = module.forwarder_rds_label.tags
+  name                 = module.forwarder_rds_label.id
+  description          = "Datadog Lambda RDS enhanced monitoring forwarder"
+  assume_role_policy   = data.aws_iam_policy_document.assume_role[0].json
+  permissions_boundary = var.permissions_boundary
+  tags                 = module.forwarder_rds_label.tags
 }
 
 resource "aws_iam_policy" "lambda_forwarder_rds" {
