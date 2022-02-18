@@ -50,7 +50,7 @@ resource "aws_iam_role" "lambda_forwarder_log" {
   name                 = module.forwarder_log_label.id
   description          = "Datadog Lambda CloudWatch/S3 logs forwarder"
   assume_role_policy   = data.aws_iam_policy_document.assume_role[0].json
-  permissions_boundary = var.permissions_boundary
+  permissions_boundary = var.log_permissions_boundary
   tags                 = module.forwarder_log_label.tags
 }
 

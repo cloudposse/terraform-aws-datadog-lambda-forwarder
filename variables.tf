@@ -243,8 +243,20 @@ variable "dd_tags_map" {
   default     = {}
 }
 
-variable "permissions_boundary" {
+variable "log_permissions_boundary" {
   type        = string
-  description = "ARN of the policy that is used to set the permissions boundary for the roles managed by this module."
+  description = "ARN of the policy that is used to set the permissions boundary for the lambda-log role managed by this module."
+  default     = null
+}
+
+variable "vpc_logs_permissions_boundary" {
+  type        = string
+  description = "ARN of the policy that is used to set the permissions boundary for the lambda-vpc-logs role managed by this module."
+  default     = null
+}
+
+variable "rds_permissions_boundary" {
+  type        = string
+  description = "ARN of the policy that is used to set the permissions boundary for the lambda-rds role managed by this module."
   default     = null
 }

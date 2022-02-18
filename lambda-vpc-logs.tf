@@ -43,7 +43,7 @@ resource "aws_iam_role" "lambda_forwarder_vpclogs" {
   name                 = module.forwarder_vpclogs_label.id
   description          = "Datadog Lambda VPC Flow Logs forwarder"
   assume_role_policy   = data.aws_iam_policy_document.assume_role[0].json
-  permissions_boundary = var.permissions_boundary
+  permissions_boundary = var.vpc_logs_permissions_boundary
   tags                 = module.forwarder_vpclogs_label.tags
 }
 

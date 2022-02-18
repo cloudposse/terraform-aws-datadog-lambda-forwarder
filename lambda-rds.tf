@@ -44,7 +44,7 @@ resource "aws_iam_role" "lambda_forwarder_rds" {
   name                 = module.forwarder_rds_label.id
   description          = "Datadog Lambda RDS enhanced monitoring forwarder"
   assume_role_policy   = data.aws_iam_policy_document.assume_role[0].json
-  permissions_boundary = var.permissions_boundary
+  permissions_boundary = var.rds_permissions_boundary
   tags                 = module.forwarder_rds_label.tags
 }
 
