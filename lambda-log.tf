@@ -47,10 +47,11 @@ module "forwarder_log_artifact" {
 resource "aws_iam_role" "lambda_forwarder_log" {
   count = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
 
-  name               = module.forwarder_log_label.id
-  description        = "Datadog Lambda CloudWatch/S3 logs forwarder"
-  assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
-  tags               = module.forwarder_log_label.tags
+  name                 = module.forwarder_log_label.id
+  description          = "Datadog Lambda CloudWatch/S3 logs forwarder"
+  assume_role_policy   = data.aws_iam_policy_document.assume_role[0].json
+  permissions_boundary = var.log_permissions_boundary
+  tags                 = module.forwarder_log_label.tags
 }
 
 resource "aws_iam_policy" "lambda_forwarder_log" {
