@@ -204,5 +204,5 @@ resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_log_subscription_f
   name            = module.forwarder_log_label.id
   log_group_name  = each.value.name
   destination_arn = aws_lambda_function.forwarder_log[0].arn
-  filter_pattern  = lookup(var.cloudwatch_forwarder_log_groups[each.key], "filter_pattern", null)
+  filter_pattern  = each.value.filter_pattern
 }
