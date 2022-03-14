@@ -48,6 +48,7 @@ resource "aws_iam_role" "lambda_forwarder_log" {
   count = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
 
   name                 = module.forwarder_log_label.id
+  path                 = var.forwarder_iam_path
   description          = "Datadog Lambda CloudWatch/S3 logs forwarder"
   assume_role_policy   = data.aws_iam_policy_document.assume_role[0].json
   permissions_boundary = var.log_permissions_boundary
@@ -58,6 +59,7 @@ resource "aws_iam_policy" "lambda_forwarder_log" {
   count = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
 
   name        = module.forwarder_log_label.id
+  path        = var.forwarder_iam_path
   description = "Datadog Lambda CloudWatch/S3 logs forwarder"
   policy      = data.aws_iam_policy_document.lambda_default[0].json
   tags        = module.forwarder_log_label.tags
@@ -165,6 +167,7 @@ data "aws_iam_policy_document" "s3_log_bucket" {
 resource "aws_iam_policy" "lambda_forwarder_log_s3" {
   count       = local.s3_logs_enabled ? 1 : 0
   name        = module.forwarder_log_s3_label.id
+  path        = var.forwarder_iam_path
   description = "Allow Datadog Lambda Logs Forwarder to access S3 buckets"
   policy      = join("", data.aws_iam_policy_document.s3_log_bucket.*.json)
   tags        = module.forwarder_log_s3_label.tags

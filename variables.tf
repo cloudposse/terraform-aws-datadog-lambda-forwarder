@@ -191,6 +191,12 @@ variable "lambda_policy_source_json" {
   default     = ""
 }
 
+variable "forwarder_iam_path" {
+  type        = string
+  description = "Path to the IAM roles and policies created"
+  default     = ""
+}
+
 variable "forwarder_lambda_datadog_host" {
   type        = string
   description = "Datadog Site to send data to. Possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com` and `ddog-gov.com`"

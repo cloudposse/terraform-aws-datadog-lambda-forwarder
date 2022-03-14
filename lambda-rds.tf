@@ -42,6 +42,8 @@ resource "aws_iam_role" "lambda_forwarder_rds" {
   count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
 
   name                 = module.forwarder_rds_label.id
+
+  path                 = var.forwarder_iam_path
   description          = "Datadog Lambda RDS enhanced monitoring forwarder"
   assume_role_policy   = data.aws_iam_policy_document.assume_role[0].json
   permissions_boundary = var.rds_permissions_boundary
@@ -52,6 +54,7 @@ resource "aws_iam_policy" "lambda_forwarder_rds" {
   count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
 
   name        = module.forwarder_rds_label.id
+  path        = var.forwarder_iam_path
   description = "Datadog Lambda RDS enhanced monitoring forwarder"
   policy      = data.aws_iam_policy_document.lambda_default[0].json
   tags        = module.forwarder_rds_label.tags
