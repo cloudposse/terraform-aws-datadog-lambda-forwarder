@@ -40,7 +40,7 @@ data "archive_file" "forwarder_vpclogs" {
 resource "aws_iam_role" "lambda_forwarder_vpclogs" {
   count = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
 
-  name                 = module.forwarder_vpclogs_label.id
+  name = module.forwarder_vpclogs_label.id
 
   path                 = var.forwarder_iam_path
   description          = "Datadog Lambda VPC Flow Logs forwarder"

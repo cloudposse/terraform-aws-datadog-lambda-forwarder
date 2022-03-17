@@ -41,7 +41,7 @@ data "archive_file" "forwarder_rds" {
 resource "aws_iam_role" "lambda_forwarder_rds" {
   count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
 
-  name                 = module.forwarder_rds_label.id
+  name = module.forwarder_rds_label.id
 
   path                 = var.forwarder_iam_path
   description          = "Datadog Lambda RDS enhanced monitoring forwarder"
