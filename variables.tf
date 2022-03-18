@@ -194,7 +194,7 @@ variable "lambda_policy_source_json" {
 variable "forwarder_iam_path" {
   type        = string
   description = "Path to the IAM roles and policies created"
-  default     = ""
+  default     = "/"
 }
 
 variable "forwarder_lambda_datadog_host" {
