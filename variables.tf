@@ -266,3 +266,16 @@ variable "rds_permissions_boundary" {
   description = "ARN of the policy that is used to set the permissions boundary for the lambda-rds role managed by this module."
   default     = null
 }
+
+
+variable "dd_fetch_lambda_tags" {
+  type        = bool
+  description = "Let the Forwarder fetch Lambda tags using GetResources API calls and apply them to logs, metrics and traces. If set to true, permission tag:GetResources will be automatically added to the Lambda execution IAM role."
+  default     = false
+}
+
+variable "dd_fetch_log_group_tags" {
+  type        = bool
+  description = "Let the forwarder fetch Log Group tags using ListTagsLogGroup and apply them to logs, metrics and traces. If set to true, permission logs:ListTagsLogGroup will be automatically added to the Lambda execution IAM role."
+  default     = false
+}

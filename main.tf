@@ -27,6 +27,10 @@ locals {
 
   dd_site = { DD_SITE = var.forwarder_lambda_datadog_host }
 
+  # Additional options for automated tag collection
+  dd_fetch_lambda_tags    = { DD_FETCH_LAMBDA_TAGS = var.dd_fetch_lambda_tags }
+  dd_fetch_log_group_tags = { DD_FETCH_LOG_GROUP_TAGS = var.dd_fetch_log_group_tags }
+
   # If map is supplied, merge map with context, or use only context
   # Convert map to dd tags equivalent
   dd_tags = length(var.dd_tags_map) > 0 ? [
@@ -36,7 +40,16 @@ locals {
   dd_tags_env = { DD_TAGS = join(",", local.dd_tags) }
 
   lambda_debug = var.forwarder_lambda_debug_enabled ? { DD_LOG_LEVEL = "debug" } : {}
-  lambda_env   = merge(local.dd_api_key_kms, local.dd_api_key_asm, local.dd_api_key_ssm, local.dd_site, local.lambda_debug, local.dd_tags_env)
+  lambda_env = merge(
+    local.dd_api_key_kms,
+    local.dd_api_key_asm,
+    local.dd_api_key_ssm,
+    local.dd_site,
+    local.lambda_debug,
+    local.dd_fetch_lambda_tags,
+    local.dd_fetch_log_group_tags,
+    local.dd_tags_env
+  )
 }
 
 # Log Forwarder, RDS Enhanced Forwarder, VPC Flow Log Forwarder
@@ -98,5 +111,31 @@ data "aws_iam_policy_document" "lambda_default" {
     actions = local.dd_api_key_iam_actions
 
     resources = [local.dd_api_key_arn]
+  }
+
+  dynamic "statement" {
+    for_each = var.dd_fetch_lambda_tags ? [true] : []
+    content {
+      sid    = "DdFetchLambdaTags"
+      effect = "Allow"
+
+      actions = [
+        "tag:GetResources"
+      ]
+      resources = ["arn:aws:lambda:::*"]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = var.dd_fetch_log_group_tags ? [true] : []
+    content {
+      sid    = "DdFetchLogGroupTags"
+      effect = "Allow"
+
+      actions = [
+        "logs:ListTagsLogGroup"
+      ]
+      resources = ["logs:*"]
+    }
   }
 }
