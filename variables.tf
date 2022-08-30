@@ -276,7 +276,7 @@ variable "dd_fetch_lambda_tags" {
 variable "dd_fetch_lambda_tags_list" {
   type        = list(string)
   description = <<EOT
-    List of sepcific ARNs the Lambda is allowed to collect tags from, defaults to `["arn:aws:lambda:::*"]`.
+    List of sepcific Lambda ARNs the forwarder is allowed to collect tags from, defaults to `["arn:aws:lambda:::*"]`.
     EOT
   default     = ["arn:aws:lambda:::*"]
 }
