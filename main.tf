@@ -122,7 +122,7 @@ data "aws_iam_policy_document" "lambda_default" {
       actions = [
         "tag:GetResources"
       ]
-      resources = ["arn:aws:lambda:::*"]
+      resources = var.dd_fetch_lambda_tags_list
     }
   }
 
@@ -135,7 +135,7 @@ data "aws_iam_policy_document" "lambda_default" {
       actions = [
         "logs:ListTagsLogGroup"
       ]
-      resources = ["logs:*"]
+      resources = var.dd_fetch_log_group_tags_list
     }
   }
 }

@@ -267,15 +267,30 @@ variable "rds_permissions_boundary" {
   default     = null
 }
 
-
 variable "dd_fetch_lambda_tags" {
   type        = bool
   description = "Let the Forwarder fetch Lambda tags using GetResources API calls and apply them to logs, metrics and traces. If set to true, permission tag:GetResources will be automatically added to the Lambda execution IAM role."
   default     = false
 }
 
+variable "dd_fetch_lambda_tags_list" {
+  type        = list(string)
+  description = <<EOT
+    List of sepcific ARNs the Lambda is allowed to collect tags from, defaults to `["arn:aws:lambda:::*"]`.
+    EOT
+  default     = ["arn:aws:lambda:::*"]
+}
+
 variable "dd_fetch_log_group_tags" {
   type        = bool
   description = "Let the forwarder fetch Log Group tags using ListTagsLogGroup and apply them to logs, metrics and traces. If set to true, permission logs:ListTagsLogGroup will be automatically added to the Lambda execution IAM role."
   default     = false
+}
+
+variable "dd_fetch_log_group_tags_list" {
+  type        = list(string)
+  description = <<EOT
+    List of sepcific log groups the Lambda is allowed to collect tags from, defaults to `["logs:*"]`.
+    EOT
+  default     = ["logs:*"]
 }
