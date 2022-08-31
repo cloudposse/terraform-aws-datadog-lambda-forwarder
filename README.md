@@ -207,6 +207,8 @@ Available targets:
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_dd_s3_bucket_cache"></a> [dd\_s3\_bucket\_cache](#module\_dd\_s3\_bucket\_cache) | cloudposse/s3-bucket/aws | 0.41.0 |
+| <a name="module_dd_s3_bucket_name"></a> [dd\_s3\_bucket\_name](#module\_dd\_s3\_bucket\_name) | cloudposse/label/null | 0.25.0 |
 | <a name="module_forwarder_log_artifact"></a> [forwarder\_log\_artifact](#module\_forwarder\_log\_artifact) | cloudposse/module-artifact/external | 0.7.1 |
 | <a name="module_forwarder_log_label"></a> [forwarder\_log\_label](#module\_forwarder\_log\_label) | cloudposse/label/null | 0.25.0 |
 | <a name="module_forwarder_log_s3_label"></a> [forwarder\_log\_s3\_label](#module\_forwarder\_log\_s3\_label) | cloudposse/label/null | 0.25.0 |
