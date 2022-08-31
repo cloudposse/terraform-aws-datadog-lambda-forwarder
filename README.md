@@ -275,6 +275,7 @@ Available targets:
 | <a name="input_dd_fetch_log_group_tags_list"></a> [dd\_fetch\_log\_group\_tags\_list](#input\_dd\_fetch\_log\_group\_tags\_list) | List of sepcific log groups the Lambda is allowed to collect tags from, defaults to `["logs:*"]`. | `list(string)` | <pre>[<br>  "logs:*"<br>]</pre> | no |
 | <a name="input_dd_forwarder_version"></a> [dd\_forwarder\_version](#input\_dd\_forwarder\_version) | Version tag of Datadog lambdas to use. https://github.com/DataDog/datadog-serverless-functions/releases | `string` | `"3.39.0"` | no |
 | <a name="input_dd_module_name"></a> [dd\_module\_name](#input\_dd\_module\_name) | The Datadog GitHub repository name | `string` | `"datadog-serverless-functions"` | no |
+| <a name="input_dd_s3_bucket_name"></a> [dd\_s3\_bucket\_name](#input\_dd\_s3\_bucket\_name) | Name of S3 bucket for Lambda to use for tags cache. If left empty and fetch tags is enabled once will be created. | `string` | `"dd_s3_bucket_name"` | no |
 | <a name="input_dd_tags"></a> [dd\_tags](#input\_dd\_tags) | A list of Datadog tags to apply to all logs forwarded to Datadog | `list(string)` | `[]` | no |
 | <a name="input_dd_tags_map"></a> [dd\_tags\_map](#input\_dd\_tags\_map) | A map of Datadog tags to apply to all logs forwarded to Datadog. This will override dd\_tags. | `map(string)` | `{}` | no |
 | <a name="input_delimiter"></a> [delimiter](#input\_delimiter) | Delimiter to be used between ID elements.<br>Defaults to `-` (hyphen). Set to `""` to use no delimiter at all. | `string` | `null` | no |
