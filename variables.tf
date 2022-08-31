@@ -294,3 +294,9 @@ variable "dd_fetch_log_group_tags_list" {
     EOT
   default     = ["logs:*"]
 }
+
+variable "dd_s3_bucket_name" {
+  type        = string
+  description = "Name of S3 bucket for Lambda to use for tags cache. If left empty and fetch tags is enabled once will be created."
+  default     = "dd_s3_bucket_name"
+}
