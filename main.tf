@@ -28,8 +28,13 @@ locals {
   dd_site = { DD_SITE = var.forwarder_lambda_datadog_host }
 
   # Additional options for automated tag collection
+  cache_enabled           = var.dd_fetch_lambda_tags || var.dd_fetch_log_group_tags
   dd_fetch_lambda_tags    = { DD_FETCH_LAMBDA_TAGS = var.dd_fetch_lambda_tags }
   dd_fetch_log_group_tags = { DD_FETCH_LOG_GROUP_TAGS = var.dd_fetch_log_group_tags }
+  # the fetch tags options require an s3 bucket for Lambda tags cache
+  dd_s3_bucket_name = local.cache_enabled ? {
+    DD_S3_BUCKET_NAME = coalesce(var.dd_s3_bucket_name, module.dd_s3_bucket_name.id)
+  } : {}
 
   # If map is supplied, merge map with context, or use only context
   # Convert map to dd tags equivalent
@@ -48,8 +53,31 @@ locals {
     local.lambda_debug,
     local.dd_fetch_lambda_tags,
     local.dd_fetch_log_group_tags,
+    local.dd_s3_bucket_name,
     local.dd_tags_env
   )
+}
+
+module "dd_s3_bucket_name" {
+  source  = "cloudposse/label/null"
+  version = "0.25.0"
+
+  enabled = local.lambda_enabled && local.cache_enabled
+
+  attributes = ["datadog-cache"]
+
+  context = module.this.context
+}
+
+module "dd_s3_bucket_cache" {
+  count   = local.lambda_enabled && local.cache_enabled ? 1 : 0
+  source  = "cloudposse/s3-bucket/aws"
+  version = "0.41.0"
+
+  bucket_name = module.dd_s3_bucket_name.id
+  acl         = "private"
+
+  context = module.this.context
 }
 
 # Log Forwarder, RDS Enhanced Forwarder, VPC Flow Log Forwarder
@@ -136,6 +164,21 @@ data "aws_iam_policy_document" "lambda_default" {
         "logs:ListTagsLogGroup"
       ]
       resources = var.dd_fetch_log_group_tags_list
+    }
+  }
+
+  dynamic "statement" {
+    for_each = local.cache_enabled ? [true] : []
+    content {
+      sid    = "DdCacheAccessS3"
+      effect = "Allow"
+
+      actions = [
+        "s3:DeleteObject",
+        "s3:GetObject",
+        "s3:PutObject"
+      ]
+      resources = module.dd_s3_bucket_cache.bucket_arn
     }
   }
 }
