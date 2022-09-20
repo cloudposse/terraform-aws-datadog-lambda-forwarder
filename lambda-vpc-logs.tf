@@ -102,10 +102,6 @@ resource "aws_lambda_function" "forwarder_vpclogs" {
     mode = var.tracing_config_mode
   }
 
-  lifecycle {
-    ignore_changes = [last_modified]
-  }
-
   tags = module.forwarder_vpclogs_label.tags
 }
 
