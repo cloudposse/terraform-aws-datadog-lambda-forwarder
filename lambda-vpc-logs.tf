@@ -20,9 +20,9 @@ module "forwarder_vpclogs_label" {
 }
 
 module "forwarder_vpclogs_artifact" {
-  count   = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
-#  source  = "cloudposse/module-artifact/external"
-#  version = "0.7.1"
+  count = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
+  #  source  = "cloudposse/module-artifact/external"
+  #  version = "0.7.1"
   source = "https://github.com/bwmetcalf/terraform-external-module-artifact/tree/remove-template-provider?ref=main"
 
   filename    = "lambda_function.py"
