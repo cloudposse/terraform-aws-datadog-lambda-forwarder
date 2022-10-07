@@ -35,8 +35,9 @@ module "forwarder_log_s3_label" {
 
 module "forwarder_log_artifact" {
   count   = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
-  source  = "cloudposse/module-artifact/external"
-  version = "0.7.1"
+#  source  = "cloudposse/module-artifact/external"
+#  version = "0.7.1"
+  source = "https://github.com/bwmetcalf/terraform-external-module-artifact/tree/remove-template-provider?ref=main"
 
   filename    = "forwarder-log.zip"
   module_name = var.dd_module_name
