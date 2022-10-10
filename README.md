@@ -207,12 +207,12 @@ Available targets:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_forwarder_log_artifact"></a> [forwarder\_log\_artifact](#module\_forwarder\_log\_artifact) | https://github.com/bwmetcalf/terraform-external-module-artifact/tree/remove-template-provider | main |
+| <a name="module_forwarder_log_artifact"></a> [forwarder\_log\_artifact](#module\_forwarder\_log\_artifact) | https://github.com/bwmetcalf/terraform-external-module-artifact.git | remove-template-provider |
 | <a name="module_forwarder_log_label"></a> [forwarder\_log\_label](#module\_forwarder\_log\_label) | cloudposse/label/null | 0.25.0 |
 | <a name="module_forwarder_log_s3_label"></a> [forwarder\_log\_s3\_label](#module\_forwarder\_log\_s3\_label) | cloudposse/label/null | 0.25.0 |
-| <a name="module_forwarder_rds_artifact"></a> [forwarder\_rds\_artifact](#module\_forwarder\_rds\_artifact) | https://github.com/bwmetcalf/terraform-external-module-artifact/tree/remove-template-provider | main |
+| <a name="module_forwarder_rds_artifact"></a> [forwarder\_rds\_artifact](#module\_forwarder\_rds\_artifact) | https://github.com/bwmetcalf/terraform-external-module-artifact.git | remove-template-provider |
 | <a name="module_forwarder_rds_label"></a> [forwarder\_rds\_label](#module\_forwarder\_rds\_label) | cloudposse/label/null | 0.25.0 |
-| <a name="module_forwarder_vpclogs_artifact"></a> [forwarder\_vpclogs\_artifact](#module\_forwarder\_vpclogs\_artifact) | https://github.com/bwmetcalf/terraform-external-module-artifact/tree/remove-template-provider | main |
+| <a name="module_forwarder_vpclogs_artifact"></a> [forwarder\_vpclogs\_artifact](#module\_forwarder\_vpclogs\_artifact) | https://github.com/bwmetcalf/terraform-external-module-artifact.git | remove-template-provider |
 | <a name="module_forwarder_vpclogs_label"></a> [forwarder\_vpclogs\_label](#module\_forwarder\_vpclogs\_label) | cloudposse/label/null | 0.25.0 |
 | <a name="module_this"></a> [this](#module\_this) | cloudposse/label/null | 0.25.0 |
 
