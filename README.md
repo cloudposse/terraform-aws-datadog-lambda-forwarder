@@ -276,7 +276,7 @@ Available targets:
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Set to false to prevent the module from creating any resources | `bool` | `null` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | ID element. Usually used for region e.g. 'uw2', 'us-west-2', OR role 'prod', 'staging', 'dev', 'UAT' | `string` | `null` | no |
 | <a name="input_forwarder_iam_path"></a> [forwarder\_iam\_path](#input\_forwarder\_iam\_path) | Path to the IAM roles and policies created | `string` | `"/"` | no |
-| <a name="input_forwarder_lambda_datadog_host"></a> [forwarder\_lambda\_datadog\_host](#input\_forwarder\_lambda\_datadog\_host) | Datadog Site to send data to. Possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com` and `ddog-gov.com` | `string` | `"datadoghq.com"` | no |
+| <a name="input_forwarder_lambda_datadog_host"></a> [forwarder\_lambda\_datadog\_host](#input\_forwarder\_lambda\_datadog\_host) | Datadog Site to send data to. Possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com`, `ue5.datadoghq.com` and `ddog-gov.com` | `string` | `"datadoghq.com"` | no |
 | <a name="input_forwarder_lambda_debug_enabled"></a> [forwarder\_lambda\_debug\_enabled](#input\_forwarder\_lambda\_debug\_enabled) | Whether to enable or disable debug for the Lambda forwarder | `bool` | `false` | no |
 | <a name="input_forwarder_log_artifact_url"></a> [forwarder\_log\_artifact\_url](#input\_forwarder\_log\_artifact\_url) | The URL for the code of the Datadog forwarder for Logs. It can be a local file, URL or git repo | `string` | `null` | no |
 | <a name="input_forwarder_log_enabled"></a> [forwarder\_log\_enabled](#input\_forwarder\_log\_enabled) | Flag to enable or disable Datadog log forwarder | `bool` | `false` | no |
@@ -503,7 +503,7 @@ Check out [our other projects][github], [follow us on twitter][twitter], [apply 
 
 [![README Footer][readme_footer_img]][readme_footer_link]
 [![Beacon][beacon]][website]
-
+<!-- markdownlint-disable -->
   [logo]: https://cloudposse.com/logo-300x69.svg
   [docs]: https://cpco.io/docs?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-datadog-lambda-forwarder&utm_content=docs
   [website]: https://cpco.io/homepage?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-datadog-lambda-forwarder&utm_content=website
@@ -534,3 +534,4 @@ Check out [our other projects][github], [follow us on twitter][twitter], [apply 
   [share_googleplus]: https://plus.google.com/share?url=https://github.com/cloudposse/terraform-aws-datadog-lambda-forwarder
   [share_email]: mailto:?subject=terraform-aws-datadog-lambda-forwarder&body=https://github.com/cloudposse/terraform-aws-datadog-lambda-forwarder
   [beacon]: https://ga-beacon.cloudposse.com/UA-76589703-4/cloudposse/terraform-aws-datadog-lambda-forwarder?pixel&cs=github&cm=readme&an=terraform-aws-datadog-lambda-forwarder
+<!-- markdownlint-restore -->
