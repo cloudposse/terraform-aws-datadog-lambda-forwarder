@@ -24,8 +24,8 @@ variable "lambda_reserved_concurrent_executions" {
 }
 
 variable "datadog_forwarder_lambda_environment_variables" {
-  type = map(string)
-  default = {}
+  type        = map(string)
+  default     = {}
   description = "Map of environment variables to pass to the Lambda Function"
 }
 
