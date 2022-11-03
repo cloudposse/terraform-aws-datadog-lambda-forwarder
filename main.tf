@@ -36,7 +36,7 @@ locals {
   dd_tags_env = { DD_TAGS = join(",", local.dd_tags) }
 
   lambda_debug = var.forwarder_lambda_debug_enabled ? { DD_LOG_LEVEL = "debug" } : {}
-  lambda_env   = merge(local.dd_api_key_kms, local.dd_api_key_asm, local.dd_api_key_ssm, local.dd_site, local.lambda_debug, local.dd_tags_env)
+  lambda_env   = merge(local.dd_api_key_kms, local.dd_api_key_asm, local.dd_api_key_ssm, local.dd_site, local.lambda_debug, local.dd_tags_env, var.datadog_forwarder_lambda_environment_variables)
 }
 
 # Log Forwarder, RDS Enhanced Forwarder, VPC Flow Log Forwarder
@@ -69,12 +69,20 @@ data "aws_iam_policy_document" "assume_role" {
 ######################################################################
 ## Create Lambda policy and attach it to the Lambda role
 
+resource "aws_iam_policy" "datadog_custom_policy" {
+  count  = local.lambda_enabled && length(var.lambda_policy_source_json) > 0 ? 1 : 0
+  name   = "DatadogForwarderCustomPolicy"
+  policy = var.lambda_policy_source_json
+
+  tags = module.this.tags
+}
+
 data "aws_iam_policy_document" "lambda_default" {
   count = local.lambda_enabled ? 1 : 0
 
   # #checkov:skip=BC_AWS_IAM_57: (Pertaining to constraining IAM write access) This policy has not write access and is restricted to one specific ARN.
 
-  source_json = var.lambda_policy_source_json
+  source_policy_documents = local.lambda_enabled && length(var.lambda_policy_source_json) > 0 ? [aws_iam_policy.datadog_custom_policy[0].policy] : []
 
   statement {
     sid = "AllowWriteLogs"

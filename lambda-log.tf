@@ -108,10 +108,6 @@ resource "aws_lambda_function" "forwarder_log" {
     mode = var.tracing_config_mode
   }
 
-  lifecycle {
-    ignore_changes = [last_modified]
-  }
-
   tags = module.forwarder_log_label.tags
 }
 
