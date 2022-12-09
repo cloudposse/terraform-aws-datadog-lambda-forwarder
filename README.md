@@ -124,6 +124,22 @@ module "datadog_lambda_forwarder" {
 }
 ```
 
+To enable Datadog forwarder for a S3 bucket with prefix:
+```hcl
+module "datadog_lambda_forwarder" {
+  source = "cloudposse/datadog-lambda-forwarder/aws"
+  # Cloud Posse recommends pinning every module to a specific version
+  # version = "x.x.x"
+
+  forwarder_log_enabled = true
+  s3_buckets_with_prefixes = {
+    MyBucketWithPrefix = {bucket_name = "my-bucket-with-prefix", bucket_prefix = "events/"}
+    AnotherWithPrefix  = {bucket_name = "another-with-prefix", bucket_prefix = "records/"}
+  }
+  s3_bucket_kms_arns       = ["arn:aws:kms:us-west-2:1234567890:key/b204f3d2-1111-2222-94333332-4444ccc222"]
+}
+```
+
 To enable Datadog forwarder for RDS authentication CloudWatch logs:
 ```hcl
 module "datadog_lambda_forwarder" {
@@ -246,6 +262,7 @@ Available targets:
 | [aws_lambda_permission.cloudwatch_groups](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_lambda_permission.cloudwatch_vpclogs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_s3_bucket_notification.s3_bucket_notification](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification) | resource |
+| [aws_s3_bucket_notification.s3_bucket_notification_with_prefixes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification) | resource |
 | [archive_file.forwarder_rds](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
 | [archive_file.forwarder_vpclogs](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
@@ -309,7 +326,8 @@ Available targets:
 | <a name="input_rds_permissions_boundary"></a> [rds\_permissions\_boundary](#input\_rds\_permissions\_boundary) | ARN of the policy that is used to set the permissions boundary for the lambda-rds role managed by this module. | `string` | `null` | no |
 | <a name="input_regex_replace_chars"></a> [regex\_replace\_chars](#input\_regex\_replace\_chars) | Terraform regular expression (regex) string.<br>Characters matching the regex will be removed from the ID elements.<br>If not set, `"/[^a-zA-Z0-9-]/"` is used to remove all characters other than hyphens, letters and digits. | `string` | `null` | no |
 | <a name="input_s3_bucket_kms_arns"></a> [s3\_bucket\_kms\_arns](#input\_s3\_bucket\_kms\_arns) | List of KMS key ARNs for s3 bucket encryption | `list(string)` | `[]` | no |
-| <a name="input_s3_buckets"></a> [s3\_buckets](#input\_s3\_buckets) | The names and ARNs of S3 buckets to forward logs to Datadog | `list(string)` | `null` | no |
+| <a name="input_s3_buckets"></a> [s3\_buckets](#input\_s3\_buckets) | The names of S3 buckets to forward logs to Datadog | `list(string)` | `[]` | no |
+| <a name="input_s3_buckets_with_prefixes"></a> [s3\_buckets\_with\_prefixes](#input\_s3\_buckets\_with\_prefixes) | The names S3 buckets and prefix to forward logs to Datadog | `map(object({ bucket_name : string, bucket_prefix : string }))` | `{}` | no |
 | <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | List of security group IDs to use when the Lambda Function runs in a VPC | `list(string)` | `null` | no |
 | <a name="input_stage"></a> [stage](#input\_stage) | ID element. Usually used to indicate role, e.g. 'prod', 'staging', 'source', 'build', 'test', 'deploy', 'release' | `string` | `null` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs to use when deploying the Lambda Function in a VPC | `list(string)` | `null` | no |
@@ -490,8 +508,8 @@ Check out [our other projects][github], [follow us on twitter][twitter], [apply 
 ### Contributors
 
 <!-- markdownlint-disable -->
-|  [![PePe Amengual][jamengual_avatar]][jamengual_homepage]<br/>[PePe Amengual][jamengual_homepage] | [![RB][nitrocode_avatar]][nitrocode_homepage]<br/>[RB][nitrocode_homepage] | [![Erik Osterman][osterman_avatar]][osterman_homepage]<br/>[Erik Osterman][osterman_homepage] | [![Andriy Knysh][aknysh_avatar]][aknysh_homepage]<br/>[Andriy Knysh][aknysh_homepage] |
-|---|---|---|---|
+|  [![PePe Amengual][jamengual_avatar]][jamengual_homepage]<br/>[PePe Amengual][jamengual_homepage] | [![RB][nitrocode_avatar]][nitrocode_homepage]<br/>[RB][nitrocode_homepage] | [![Erik Osterman][osterman_avatar]][osterman_homepage]<br/>[Erik Osterman][osterman_homepage] | [![Andriy Knysh][aknysh_avatar]][aknysh_homepage]<br/>[Andriy Knysh][aknysh_homepage] | [![Julien B][jbrt_avatar]][jbrt_homepage]<br/>[Julien B][jbrt_homepage] |
+|---|---|---|---|---|
 <!-- markdownlint-restore -->
 
   [jamengual_homepage]: https://github.com/jamengual
@@ -502,6 +520,8 @@ Check out [our other projects][github], [follow us on twitter][twitter], [apply 
   [osterman_avatar]: https://img.cloudposse.com/150x150/https://github.com/osterman.png
   [aknysh_homepage]: https://github.com/aknysh
   [aknysh_avatar]: https://img.cloudposse.com/150x150/https://github.com/aknysh.png
+  [jbrt_homepage]: https://github.com/jbrt
+  [jbrt_avatar]: https://img.cloudposse.com/150x150/https://github.com/jbrt.png
 
 [![README Footer][readme_footer_img]][readme_footer_link]
 [![Beacon][beacon]][website]
