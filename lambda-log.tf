@@ -4,8 +4,8 @@
 # Refer to the table here https://docs.datadoghq.com/logs/guide/send-aws-services-logs-with-the-datadog-lambda-function/?tab=awsconsole#automatically-set-up-triggers
 
 locals {
-  s3_bucket_names_to_authorize = toset(flatten([var.s3_buckets, [for o in var.s3_buckets_with_prefixes: o.bucket_name]]))
-  s3_logs_enabled = local.lambda_enabled && var.forwarder_log_enabled && local.s3_bucket_names_to_authorize != null
+  s3_bucket_names_to_authorize = toset(flatten([var.s3_buckets, [for o in var.s3_buckets_with_prefixes : o.bucket_name]]))
+  s3_logs_enabled              = local.lambda_enabled && var.forwarder_log_enabled && local.s3_bucket_names_to_authorize != null
 
   forwarder_log_artifact_url = var.forwarder_log_artifact_url != null ? var.forwarder_log_artifact_url : (
     "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-${var.dd_forwarder_version}/${var.dd_artifact_filename}-${var.dd_forwarder_version}.zip"
