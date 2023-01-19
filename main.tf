@@ -19,7 +19,7 @@ locals {
 
   dd_api_key_resource    = var.dd_api_key_source.resource
   dd_api_key_identifier  = var.dd_api_key_source.identifier
-  dd_api_key_arn         = local.dd_api_key_resource == "ssm" ? join("", data.aws_ssm_parameter.api_key.*.arn) : local.dd_api_key_identifier
+  dd_api_key_arn         = local.dd_api_key_resource == "ssm" ? coalesce(var.api_key_ssm_arn, join("", data.aws_ssm_parameter.api_key.*.arn)) : local.dd_api_key_identifier
   dd_api_key_iam_actions = [lookup({ kms = "kms:Decrypt", asm = "secretsmanager:GetSecretValue", ssm = "ssm:GetParameter" }, local.dd_api_key_resource, "")]
   dd_api_key_kms         = local.dd_api_key_resource == "kms" ? { DD_KMS_API_KEY = var.dd_api_key_kms_ciphertext_blob } : {}
   dd_api_key_asm         = local.dd_api_key_resource == "asm" ? { DD_API_KEY_SECRET_ARN = local.dd_api_key_identifier } : {}
@@ -42,7 +42,7 @@ locals {
 # Log Forwarder, RDS Enhanced Forwarder, VPC Flow Log Forwarder
 
 data "aws_ssm_parameter" "api_key" {
-  count = local.lambda_enabled && local.dd_api_key_resource == "ssm" ? 1 : 0
+  count = local.lambda_enabled && local.dd_api_key_resource == "ssm" && var.api_key_ssm_arn == null ? 1 : 0
   name  = local.dd_api_key_identifier
 }
 

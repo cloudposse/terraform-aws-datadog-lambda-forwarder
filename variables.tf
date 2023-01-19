@@ -278,3 +278,9 @@ variable "rds_permissions_boundary" {
   description = "ARN of the policy that is used to set the permissions boundary for the lambda-rds role managed by this module."
   default     = null
 }
+
+variable "api_key_ssm_arn" {
+  type        = string
+  description = "SSM Arn of the Datadog API key, passing this removes the need to fetch the key from the SSM parameter store. This could be the case if the SSM Key is in a different region than the lambda."
+  default     = null
+}
