@@ -4,7 +4,8 @@
 # Refer to the table here https://docs.datadoghq.com/logs/guide/send-aws-services-logs-with-the-datadog-lambda-function/?tab=awsconsole#automatically-set-up-triggers
 
 locals {
-  s3_logs_enabled = local.lambda_enabled && var.forwarder_log_enabled && var.s3_buckets != null
+  s3_bucket_names_to_authorize = toset(flatten([var.s3_buckets, [for o in var.s3_buckets_with_prefixes : o.bucket_name]]))
+  s3_logs_enabled              = local.lambda_enabled && var.forwarder_log_enabled && (length(var.s3_buckets) != 0 || length(var.s3_buckets_with_prefixes) != 0)
 
   forwarder_log_artifact_url = var.forwarder_log_artifact_url != null ? var.forwarder_log_artifact_url : (
     "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-${var.dd_forwarder_version}/${var.dd_artifact_filename}-${var.dd_forwarder_version}.zip"
@@ -112,7 +113,7 @@ resource "aws_lambda_function" "forwarder_log" {
 }
 
 resource "aws_lambda_permission" "allow_s3_bucket" {
-  for_each      = local.s3_logs_enabled ? toset(var.s3_buckets) : []
+  for_each      = local.s3_logs_enabled ? local.s3_bucket_names_to_authorize : []
   statement_id  = "AllowS3ToInvokeLambda-${each.value}"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.forwarder_log[0].arn
@@ -132,6 +133,19 @@ resource "aws_s3_bucket_notification" "s3_bucket_notification" {
   depends_on = [aws_lambda_permission.allow_s3_bucket]
 }
 
+resource "aws_s3_bucket_notification" "s3_bucket_notification_with_prefixes" {
+  for_each = local.s3_logs_enabled ? var.s3_buckets_with_prefixes : {}
+  bucket   = each.value.bucket_name
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.forwarder_log[0].arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = each.value.bucket_prefix
+  }
+
+  depends_on = [aws_lambda_permission.allow_s3_bucket]
+}
+
 data "aws_iam_policy_document" "s3_log_bucket" {
   count = local.s3_logs_enabled ? 1 : 0
 
@@ -144,7 +158,10 @@ data "aws_iam_policy_document" "s3_log_bucket" {
       "s3:ListBucket",
       "s3:ListObjects",
     ]
-    resources = concat(formatlist("%s:s3:::%s", local.arn_format, var.s3_buckets), formatlist("%s:s3:::%s/*", local.arn_format, var.s3_buckets))
+    resources = concat(
+      formatlist("%s:s3:::%s", local.arn_format, local.s3_bucket_names_to_authorize),
+      formatlist("%s:s3:::%s/*", local.arn_format, local.s3_bucket_names_to_authorize)
+    )
   }
 
   dynamic "statement" {
