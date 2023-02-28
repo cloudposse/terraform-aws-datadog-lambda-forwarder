@@ -284,3 +284,37 @@ variable "api_key_ssm_arn" {
   description = "SSM Arn of the Datadog API key, passing this removes the need to fetch the key from the SSM parameter store. This could be the case if the SSM Key is in a different region than the lambda."
   default     = null
 }
+
+variable "cloudwatch_forwarder_event_patterns" {
+  type = map(object({
+    version     = optional(list(string))
+    id          = optional(list(string))
+    detail-type = optional(list(string))
+    source      = optional(list(string))
+    account     = optional(list(string))
+    time        = optional(list(string))
+    region      = optional(list(string))
+    resources   = optional(list(string))
+    detail      = optional(map(list(string)))
+  }))
+  description = <<-EOF
+    Map of title => CloudWatch Event patterns to forward to Datadog. Event structure from here: <https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html#CloudWatchEventsPatterns>
+    Example:
+    ```hcl
+    cloudwatch_forwarder_event_rules = {
+      "guardduty" = {
+        source = ["aws.guardduty"]
+        detail-type = ["GuardDuty Finding"]
+      }
+      "ec2-terminated" = {
+        source = ["aws.ec2"]
+        detail-type = ["EC2 Instance State-change Notification"]
+        detail = {
+          state = ["terminated"]
+        }
+      }
+    }
+    ```
+  EOF
+  default     = {}
+}
