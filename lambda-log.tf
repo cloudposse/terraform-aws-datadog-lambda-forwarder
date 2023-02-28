@@ -248,6 +248,8 @@ module "cloudwatch_event" {
   name = module.forwarder_log_label.id
 
   cloudwatch_event_rule_description = "${each.key} events forwarded to Datadog"
+
+  # Any optional attributes that are not set will equal null, and CloudWatch doesn't like that.
   cloudwatch_event_rule_pattern     = {for k,v in each.value: k => v if v != null}
   cloudwatch_event_target_arn       = aws_lambda_function.forwarder_log[0].arn
 }
