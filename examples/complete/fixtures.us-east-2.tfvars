@@ -15,11 +15,11 @@ dd_api_key_source = {
 
 cloudwatch_forwarder_event_patterns = {
   "guardduty" = {
-    source = ["aws.guardduty"]
+    source      = ["aws.guardduty"]
     detail-type = ["GuardDuty Finding"]
   }
   "cloudtrail" = {
-    source = ["aws.cloudtrail"]
+    source      = ["aws.cloudtrail"]
     detail-type = ["AWS API Call via CloudTrail"]
   }
 }
