@@ -245,7 +245,7 @@ module "cloudwatch_event" {
 
   for_each = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_event_patterns : {}
 
-  name = module.forwarder_log_label.id
+  name = "${module.forwarder_log_label.id}-${each.key}"
 
   cloudwatch_event_rule_description = "${each.key} events forwarded to Datadog"
 
