@@ -3,7 +3,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
 | <a name="requirement_archive"></a> [archive](#requirement\_archive) | >= 2.2.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.0 |
 
@@ -18,6 +18,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_cloudwatch_event"></a> [cloudwatch\_event](#module\_cloudwatch\_event) | cloudposse/cloudwatch-events/aws | 0.6.1 |
 | <a name="module_forwarder_log_artifact"></a> [forwarder\_log\_artifact](#module\_forwarder\_log\_artifact) | cloudposse/module-artifact/external | 0.7.1 |
 | <a name="module_forwarder_log_label"></a> [forwarder\_log\_label](#module\_forwarder\_log\_label) | cloudposse/label/null | 0.25.0 |
 | <a name="module_forwarder_log_s3_label"></a> [forwarder\_log\_s3\_label](#module\_forwarder\_log\_s3\_label) | cloudposse/label/null | 0.25.0 |
@@ -52,6 +53,7 @@
 | [aws_lambda_function.forwarder_log](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
 | [aws_lambda_function.forwarder_rds](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
 | [aws_lambda_function.forwarder_vpclogs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
+| [aws_lambda_permission.allow_eventbridge](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_lambda_permission.allow_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_lambda_permission.cloudwatch_enhanced_rds_monitoring](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_lambda_permission.cloudwatch_groups](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
@@ -76,6 +78,7 @@
 | <a name="input_additional_tag_map"></a> [additional\_tag\_map](#input\_additional\_tag\_map) | Additional key-value pairs to add to each map in `tags_as_list_of_maps`. Not added to `tags` or `id`.<br>This is for some rare cases where resources want additional configuration of tags<br>and therefore take a list of maps with tag key, value, and additional configuration. | `map(string)` | `{}` | no |
 | <a name="input_api_key_ssm_arn"></a> [api\_key\_ssm\_arn](#input\_api\_key\_ssm\_arn) | SSM Arn of the Datadog API key, passing this removes the need to fetch the key from the SSM parameter store. This could be the case if the SSM Key is in a different region than the lambda. | `string` | `null` | no |
 | <a name="input_attributes"></a> [attributes](#input\_attributes) | ID element. Additional attributes (e.g. `workers` or `cluster`) to add to `id`,<br>in the order they appear in the list. New attributes are appended to the<br>end of the list. The elements of the list are joined by the `delimiter`<br>and treated as a single ID element. | `list(string)` | `[]` | no |
+| <a name="input_cloudwatch_forwarder_event_patterns"></a> [cloudwatch\_forwarder\_event\_patterns](#input\_cloudwatch\_forwarder\_event\_patterns) | Map of title => CloudWatch Event patterns to forward to Datadog. Event structure from here: <https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html#CloudWatchEventsPatterns><br>Example:<pre>hcl<br>cloudwatch_forwarder_event_rules = {<br>  "guardduty" = {<br>    source = ["aws.guardduty"]<br>    detail-type = ["GuardDuty Finding"]<br>  }<br>  "ec2-terminated" = {<br>    source = ["aws.ec2"]<br>    detail-type = ["EC2 Instance State-change Notification"]<br>    detail = {<br>      state = ["terminated"]<br>    }<br>  }<br>}</pre> | <pre>map(object({<br>    version     = optional(list(string))<br>    id          = optional(list(string))<br>    detail-type = optional(list(string))<br>    source      = optional(list(string))<br>    account     = optional(list(string))<br>    time        = optional(list(string))<br>    region      = optional(list(string))<br>    resources   = optional(list(string))<br>    detail      = optional(map(list(string)))<br>  }))</pre> | `{}` | no |
 | <a name="input_cloudwatch_forwarder_log_groups"></a> [cloudwatch\_forwarder\_log\_groups](#input\_cloudwatch\_forwarder\_log\_groups) | Map of CloudWatch Log Groups with a filter pattern that the Lambda forwarder will send logs from. For example: { mysql1 = { name = "/aws/rds/maincluster", filter\_pattern = "" } | <pre>map(object({<br>    name           = string<br>    filter_pattern = string<br>  }))</pre> | `{}` | no |
 | <a name="input_context"></a> [context](#input\_context) | Single object for setting entire context at once.<br>See description of individual variables for details.<br>Leave string and numeric variables as `null` to use default value.<br>Individual variable settings (non-null) override settings in context object,<br>except for attributes, tags, and additional\_tag\_map, which are merged. | `any` | <pre>{<br>  "additional_tag_map": {},<br>  "attributes": [],<br>  "delimiter": null,<br>  "descriptor_formats": {},<br>  "enabled": true,<br>  "environment": null,<br>  "id_length_limit": null,<br>  "label_key_case": null,<br>  "label_order": [],<br>  "label_value_case": null,<br>  "labels_as_tags": [<br>    "unset"<br>  ],<br>  "name": null,<br>  "namespace": null,<br>  "regex_replace_chars": null,<br>  "stage": null,<br>  "tags": {},<br>  "tenant": null<br>}</pre> | no |
 | <a name="input_datadog_forwarder_lambda_environment_variables"></a> [datadog\_forwarder\_lambda\_environment\_variables](#input\_datadog\_forwarder\_lambda\_environment\_variables) | Map of environment variables to pass to the Lambda Function | `map(string)` | `{}` | no |

@@ -39,3 +39,37 @@ variable "dd_api_key_source" {
     error_message = "Name for SSM parameter does not appear to be valid format, acceptable characters are `a-zA-Z0-9_.-` and `/` to delineate hierarchies."
   }
 }
+
+variable "cloudwatch_forwarder_event_patterns" {
+  type = map(object({
+    version     = optional(list(string))
+    id          = optional(list(string))
+    detail-type = optional(list(string))
+    source      = optional(list(string))
+    account     = optional(list(string))
+    time        = optional(list(string))
+    region      = optional(list(string))
+    resources   = optional(list(string))
+    detail      = optional(map(list(string)))
+  }))
+  description = <<-EOF
+    Map of title => CloudWatch Event patterns to forward to Datadog. Event structure from here: <https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html#CloudWatchEventsPatterns>
+    Example:
+    ```hcl
+    cloudwatch_forwarder_event_rules = {
+      "guardduty" = {
+        source = ["aws.guardduty"]
+        detail-type = ["GuardDuty Finding"]
+      }
+      "ec2-terminated" = {
+        source = ["aws.ec2"]
+        detail-type = ["EC2 Instance State-change Notification"]
+        detail = {
+          state = ["terminated"]
+        }
+      }
+    }
+    ```
+  EOF
+  default     = {}
+}

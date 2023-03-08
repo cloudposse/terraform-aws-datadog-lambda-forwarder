@@ -27,6 +27,8 @@ module "datadog_lambda_log_forwarder" {
     }
   }
 
+  cloudwatch_forwarder_event_patterns = var.cloudwatch_forwarder_event_patterns
+
   # Supply tags
   # This results in DD_TAGS = "testkey10,testkey3:testval3,testkey4:testval4"
   dd_tags_map = {

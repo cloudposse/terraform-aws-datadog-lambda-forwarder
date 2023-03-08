@@ -182,14 +182,14 @@ resource "aws_iam_policy" "lambda_forwarder_log_s3" {
   name        = module.forwarder_log_s3_label.id
   path        = var.forwarder_iam_path
   description = "Allow Datadog Lambda Logs Forwarder to access S3 buckets"
-  policy      = join("", data.aws_iam_policy_document.s3_log_bucket.*.json)
+  policy      = join("", data.aws_iam_policy_document.s3_log_bucket[*].json)
   tags        = module.forwarder_log_s3_label.tags
 }
 
 resource "aws_iam_role_policy_attachment" "datadog_s3" {
   count      = local.s3_logs_enabled ? 1 : 0
-  role       = join("", aws_iam_role.lambda_forwarder_log.*.name)
-  policy_arn = join("", aws_iam_policy.lambda_forwarder_log_s3.*.arn)
+  role       = join("", aws_iam_role.lambda_forwarder_log[*].name)
+  policy_arn = join("", aws_iam_policy.lambda_forwarder_log_s3[*].arn)
 }
 
 # Lambda Forwarder logs
@@ -228,4 +228,29 @@ resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_log_subscription_f
   log_group_name  = data.aws_cloudwatch_log_group.cloudwatch_log_group[each.key].name
   destination_arn = aws_lambda_function.forwarder_log[0].arn
   filter_pattern  = each.value.filter_pattern
+}
+
+resource "aws_lambda_permission" "allow_eventbridge" {
+  for_each = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_event_patterns : {}
+
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.forwarder_log[0].function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = module.cloudwatch_event[each.key].aws_cloudwatch_event_rule_arn
+}
+
+module "cloudwatch_event" {
+  source  = "cloudposse/cloudwatch-events/aws"
+  version = "0.6.1"
+
+  for_each = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_event_patterns : {}
+
+  name    = each.key
+  context = module.forwarder_log_label.context
+
+  cloudwatch_event_rule_description = "${each.key} events forwarded to Datadog"
+
+  # Any optional attributes that are not set will equal null, and CloudWatch doesn't like that.
+  cloudwatch_event_rule_pattern = { for k, v in each.value : k => v if v != null }
+  cloudwatch_event_target_arn   = aws_lambda_function.forwarder_log[0].arn
 }
