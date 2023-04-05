@@ -22,7 +22,7 @@ module "forwarder_vpclogs_label" {
 module "forwarder_vpclogs_artifact" {
   count   = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
   source  = "cloudposse/module-artifact/external"
-  version = "0.7.1"
+  version = "0.7.2"
 
   filename    = "lambda_function.py"
   module_name = var.dd_module_name
