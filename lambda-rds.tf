@@ -104,6 +104,10 @@ resource "aws_lambda_function" "forwarder_rds" {
   }
 
   tags = module.forwarder_rds_label.tags
+    
+  # The Lambda function needs to be created after the log group
+  # If not, the Lambda will auto-create a log group, preventing the one below from being created
+  depends_on = [aws_cloudwatch_log_group.forwarder_rds]
 }
 
 resource "aws_lambda_permission" "cloudwatch_enhanced_rds_monitoring" {
