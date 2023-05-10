@@ -94,6 +94,22 @@ usage: |-
   }
   ```
 
+  To enable Datadog forwarder for a S3 bucket with prefix:
+  ```hcl
+  module "datadog_lambda_forwarder" {
+    source = "cloudposse/datadog-lambda-forwarder/aws"
+    # Cloud Posse recommends pinning every module to a specific version
+    # version = "x.x.x"
+
+    forwarder_log_enabled = true
+    s3_buckets_with_prefixes = {
+      MyBucketWithPrefix = {bucket_name = "my-bucket-with-prefix", bucket_prefix = "events/"}
+      AnotherWithPrefix  = {bucket_name = "another-with-prefix", bucket_prefix = "records/"}
+    }
+    s3_bucket_kms_arns       = ["arn:aws:kms:us-west-2:1234567890:key/b204f3d2-1111-2222-94333332-4444ccc222"]
+  }
+  ```
+
   To enable Datadog forwarder for RDS authentication CloudWatch logs:
   ```hcl
   module "datadog_lambda_forwarder" {
@@ -159,3 +175,5 @@ contributors:
     github: "osterman"
   - name: "Andriy Knysh"
     github: "aknysh"
+  - name: "Julien B"
+    github: "jbrt"
