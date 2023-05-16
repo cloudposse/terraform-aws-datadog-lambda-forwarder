@@ -21,7 +21,8 @@ module "forwarder_rds_label" {
 }
 
 module "forwarder_rds_artifact" {
-  count   = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+
   source  = "cloudposse/module-artifact/external"
   version = "0.7.2"
 
@@ -32,7 +33,8 @@ module "forwarder_rds_artifact" {
 }
 
 data "archive_file" "forwarder_rds" {
-  count       = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+
   type        = "zip"
   source_file = module.forwarder_rds_artifact[0].file
   output_path = "${path.module}/lambda.zip"
@@ -117,7 +119,8 @@ resource "aws_lambda_permission" "cloudwatch_enhanced_rds_monitoring" {
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter_rds" {
-  count           = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+  count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
+
   name            = module.forwarder_rds_label.id
   log_group_name  = "RDSOSMetrics"
   destination_arn = aws_lambda_function.forwarder_rds[0].arn
