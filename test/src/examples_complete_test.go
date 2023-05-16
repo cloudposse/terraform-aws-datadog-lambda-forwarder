@@ -38,8 +38,5 @@ func TestExamplesComplete(t *testing.T) {
 	terraform.InitAndApply(t, terraformOptions)
 
 	lambdaFunctionName := terraform.Output(t, terraformOptions, "lambda_forwarder_log_function_name")
-	// Verify we're getting back the outputs we expect
-	//assert.Contains(t, lambdaRdsArn, expectedlambdaRdsArn)
-
 	assert.Equal(t, "eg-ue2-test-datadog-lambda-forwarder-"+randID+"-logs", lambdaFunctionName)
 }
