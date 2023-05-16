@@ -13,6 +13,7 @@ resource "aws_ssm_parameter" "datadog_key" {
   description = "Test Datadog key"
   type        = "SecureString"
   value       = "testkey"
+  overwrite   = true
 }
 
 module "datadog_lambda_log_forwarder" {
