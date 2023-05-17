@@ -35,7 +35,8 @@ module "forwarder_log_s3_label" {
 }
 
 module "forwarder_log_artifact" {
-  count   = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
+  count = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
+
   source  = "cloudposse/module-artifact/external"
   version = "0.7.2"
 
@@ -113,7 +114,8 @@ resource "aws_lambda_function" "forwarder_log" {
 }
 
 resource "aws_lambda_permission" "allow_s3_bucket" {
-  for_each      = local.s3_logs_enabled ? local.s3_bucket_names_to_authorize : []
+  for_each = local.s3_logs_enabled ? local.s3_bucket_names_to_authorize : []
+
   statement_id  = "AllowS3ToInvokeLambda-${each.value}"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.forwarder_log[0].arn
@@ -123,7 +125,8 @@ resource "aws_lambda_permission" "allow_s3_bucket" {
 
 resource "aws_s3_bucket_notification" "s3_bucket_notification" {
   for_each = local.s3_logs_enabled ? toset(var.s3_buckets) : []
-  bucket   = each.key
+
+  bucket = each.key
 
   lambda_function {
     lambda_function_arn = aws_lambda_function.forwarder_log[0].arn
@@ -135,7 +138,8 @@ resource "aws_s3_bucket_notification" "s3_bucket_notification" {
 
 resource "aws_s3_bucket_notification" "s3_bucket_notification_with_prefixes" {
   for_each = local.s3_logs_enabled ? var.s3_buckets_with_prefixes : {}
-  bucket   = each.value.bucket_name
+
+  bucket = each.value.bucket_name
 
   lambda_function {
     lambda_function_arn = aws_lambda_function.forwarder_log[0].arn
@@ -178,7 +182,8 @@ data "aws_iam_policy_document" "s3_log_bucket" {
 }
 
 resource "aws_iam_policy" "lambda_forwarder_log_s3" {
-  count       = local.s3_logs_enabled ? 1 : 0
+  count = local.s3_logs_enabled ? 1 : 0
+
   name        = module.forwarder_log_s3_label.id
   path        = var.forwarder_iam_path
   description = "Allow Datadog Lambda Logs Forwarder to access S3 buckets"
@@ -187,7 +192,8 @@ resource "aws_iam_policy" "lambda_forwarder_log_s3" {
 }
 
 resource "aws_iam_role_policy_attachment" "datadog_s3" {
-  count      = local.s3_logs_enabled ? 1 : 0
+  count = local.s3_logs_enabled ? 1 : 0
+
   role       = join("", aws_iam_role.lambda_forwarder_log[*].name)
   policy_arn = join("", aws_iam_policy.lambda_forwarder_log_s3[*].arn)
 }

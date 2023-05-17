@@ -20,7 +20,8 @@ module "forwarder_vpclogs_label" {
 }
 
 module "forwarder_vpclogs_artifact" {
-  count   = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
+  count = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
+
   source  = "cloudposse/module-artifact/external"
   version = "0.7.2"
 
@@ -31,7 +32,8 @@ module "forwarder_vpclogs_artifact" {
 }
 
 data "archive_file" "forwarder_vpclogs" {
-  count       = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
+  count = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
+
   type        = "zip"
   source_file = module.forwarder_vpclogs_artifact[0].file
   output_path = "${path.module}/lambda.zip"
@@ -118,7 +120,8 @@ resource "aws_lambda_permission" "cloudwatch_vpclogs" {
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filter_vpclogs" {
-  count           = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
+  count = local.lambda_enabled && var.forwarder_vpc_logs_enabled ? 1 : 0
+
   name            = module.forwarder_vpclogs_label.id
   log_group_name  = var.vpclogs_cloudwatch_log_group
   destination_arn = aws_lambda_function.forwarder_vpclogs[0].arn
