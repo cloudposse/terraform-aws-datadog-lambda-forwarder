@@ -38,7 +38,7 @@ module "forwarder_log_artifact" {
   count = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
 
   source  = "cloudposse/module-artifact/external"
-  version = "0.7.2"
+  version = "0.8.0"
 
   filename    = "forwarder-log.zip"
   module_name = var.dd_module_name
