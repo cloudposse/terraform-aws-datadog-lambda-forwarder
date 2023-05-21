@@ -281,7 +281,11 @@ variable "rds_permissions_boundary" {
 
 variable "api_key_ssm_arn" {
   type        = string
-  description = "SSM Arn of the Datadog API key, passing this removes the need to fetch the key from the SSM parameter store. This could be the case if the SSM Key is in a different region than the lambda."
+  description = <<-EOF
+    ARN of the SSM parameter for the Datadog API key.
+    Passing this removes the need to fetch the key from the SSM parameter store.
+    This could be the case if the SSM Key is in a different region than the lambda.
+  EOF
   default     = null
 }
 
