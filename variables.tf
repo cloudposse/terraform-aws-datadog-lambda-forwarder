@@ -23,6 +23,12 @@ variable "lambda_reserved_concurrent_executions" {
   default     = -1
 }
 
+variable "datadog_forwarder_lambda_environment_variables" {
+  type        = map(string)
+  default     = {}
+  description = "Map of environment variables to pass to the Lambda Function"
+}
+
 variable "lambda_runtime" {
   type        = string
   description = "Runtime environment for Datadog Lambda"
@@ -134,8 +140,14 @@ variable "kms_key_id" {
 
 variable "s3_buckets" {
   type        = list(string)
-  description = "The names and ARNs of S3 buckets to forward logs to Datadog"
-  default     = null
+  description = "The names of S3 buckets to forward logs to Datadog"
+  default     = []
+}
+
+variable "s3_buckets_with_prefixes" {
+  type        = map(object({ bucket_name : string, bucket_prefix : string }))
+  description = "The names S3 buckets and prefix to forward logs to Datadog"
+  default     = {}
 }
 
 variable "s3_bucket_kms_arns" {
@@ -199,11 +211,11 @@ variable "forwarder_iam_path" {
 
 variable "forwarder_lambda_datadog_host" {
   type        = string
-  description = "Datadog Site to send data to. Possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com` and `ddog-gov.com`"
+  description = "Datadog Site to send data to. Possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com`, `us5.datadoghq.com` and `ddog-gov.com`"
   default     = "datadoghq.com"
   validation {
-    condition     = contains(["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "ddog-gov.com"], var.forwarder_lambda_datadog_host)
-    error_message = "Invalid host: possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com` and `ddog-gov.com`."
+    condition     = contains(["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "us5.datadoghq.com", "ddog-gov.com"], var.forwarder_lambda_datadog_host)
+    error_message = "Invalid host: possible values are `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com`, `us5.datadoghq.com` and `ddog-gov.com`."
   }
 }
 
@@ -265,4 +277,48 @@ variable "rds_permissions_boundary" {
   type        = string
   description = "ARN of the policy that is used to set the permissions boundary for the lambda-rds role managed by this module."
   default     = null
+}
+
+variable "api_key_ssm_arn" {
+  type        = string
+  description = <<-EOF
+    ARN of the SSM parameter for the Datadog API key.
+    Passing this removes the need to fetch the key from the SSM parameter store.
+    This could be the case if the SSM Key is in a different region than the lambda.
+  EOF
+  default     = null
+}
+
+variable "cloudwatch_forwarder_event_patterns" {
+  type = map(object({
+    version     = optional(list(string))
+    id          = optional(list(string))
+    detail-type = optional(list(string))
+    source      = optional(list(string))
+    account     = optional(list(string))
+    time        = optional(list(string))
+    region      = optional(list(string))
+    resources   = optional(list(string))
+    detail      = optional(map(list(string)))
+  }))
+  description = <<-EOF
+    Map of title => CloudWatch Event patterns to forward to Datadog. Event structure from here: <https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html#CloudWatchEventsPatterns>
+    Example:
+    ```hcl
+    cloudwatch_forwarder_event_rules = {
+      "guardduty" = {
+        source = ["aws.guardduty"]
+        detail-type = ["GuardDuty Finding"]
+      }
+      "ec2-terminated" = {
+        source = ["aws.ec2"]
+        detail-type = ["EC2 Instance State-change Notification"]
+        detail = {
+          state = ["terminated"]
+        }
+      }
+    }
+    ```
+  EOF
+  default     = {}
 }

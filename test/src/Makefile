@@ -15,8 +15,10 @@ init:
 .PHONY : test
 ## Run tests
 test: init
+	# This project runs `git` externally, so it needs extra permissions when run by a GitHub Action
+	[[ -n "$$GITHUB_WORKSPACE" ]] && git config --global --add safe.directory "$$GITHUB_WORKSPACE" || true
 	go mod download
-	go test -v -timeout 60m -run TestExamplesComplete
+	go test -v -timeout 30m
 
 ## Run tests in docker container
 docker/test:

@@ -1,6 +1,6 @@
 module "cloudwatch_logs" {
   source  = "cloudposse/cloudwatch-logs/aws"
-  version = "0.6.1"
+  version = "0.6.6"
 
   name    = "postgresql"
   context = module.this.context
@@ -13,6 +13,7 @@ resource "aws_ssm_parameter" "datadog_key" {
   description = "Test Datadog key"
   type        = "SecureString"
   value       = "testkey"
+  overwrite   = true
 }
 
 module "datadog_lambda_log_forwarder" {
@@ -26,6 +27,8 @@ module "datadog_lambda_log_forwarder" {
       filter_pattern = ""
     }
   }
+
+  cloudwatch_forwarder_event_patterns = var.cloudwatch_forwarder_event_patterns
 
   # Supply tags
   # This results in DD_TAGS = "testkey10,testkey3:testval3,testkey4:testval4"

@@ -4,7 +4,8 @@
 # Refer to the table here https://docs.datadoghq.com/logs/guide/send-aws-services-logs-with-the-datadog-lambda-function/?tab=awsconsole#automatically-set-up-triggers
 
 locals {
-  s3_logs_enabled = local.lambda_enabled && var.forwarder_log_enabled && var.s3_buckets != null
+  s3_bucket_names_to_authorize = toset(flatten([var.s3_buckets, [for o in var.s3_buckets_with_prefixes : o.bucket_name]]))
+  s3_logs_enabled              = local.lambda_enabled && var.forwarder_log_enabled && (length(var.s3_buckets) != 0 || length(var.s3_buckets_with_prefixes) != 0)
 
   forwarder_log_artifact_url = var.forwarder_log_artifact_url != null ? var.forwarder_log_artifact_url : (
     "https://github.com/DataDog/datadog-serverless-functions/releases/download/aws-dd-forwarder-${var.dd_forwarder_version}/${var.dd_artifact_filename}-${var.dd_forwarder_version}.zip"
@@ -34,9 +35,10 @@ module "forwarder_log_s3_label" {
 }
 
 module "forwarder_log_artifact" {
-  count   = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
+  count = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
+
   source  = "cloudposse/module-artifact/external"
-  version = "0.7.1"
+  version = "0.7.2"
 
   filename    = "forwarder-log.zip"
   module_name = var.dd_module_name
@@ -108,15 +110,12 @@ resource "aws_lambda_function" "forwarder_log" {
     mode = var.tracing_config_mode
   }
 
-  lifecycle {
-    ignore_changes = [last_modified]
-  }
-
   tags = module.forwarder_log_label.tags
 }
 
 resource "aws_lambda_permission" "allow_s3_bucket" {
-  for_each      = local.s3_logs_enabled ? toset(var.s3_buckets) : []
+  for_each = local.s3_logs_enabled ? local.s3_bucket_names_to_authorize : []
+
   statement_id  = "AllowS3ToInvokeLambda-${each.value}"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.forwarder_log[0].arn
@@ -126,11 +125,26 @@ resource "aws_lambda_permission" "allow_s3_bucket" {
 
 resource "aws_s3_bucket_notification" "s3_bucket_notification" {
   for_each = local.s3_logs_enabled ? toset(var.s3_buckets) : []
-  bucket   = each.key
+
+  bucket = each.key
 
   lambda_function {
     lambda_function_arn = aws_lambda_function.forwarder_log[0].arn
     events              = ["s3:ObjectCreated:*"]
+  }
+
+  depends_on = [aws_lambda_permission.allow_s3_bucket]
+}
+
+resource "aws_s3_bucket_notification" "s3_bucket_notification_with_prefixes" {
+  for_each = local.s3_logs_enabled ? var.s3_buckets_with_prefixes : {}
+
+  bucket = each.value.bucket_name
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.forwarder_log[0].arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = each.value.bucket_prefix
   }
 
   depends_on = [aws_lambda_permission.allow_s3_bucket]
@@ -148,7 +162,10 @@ data "aws_iam_policy_document" "s3_log_bucket" {
       "s3:ListBucket",
       "s3:ListObjects",
     ]
-    resources = concat(formatlist("%s:s3:::%s", local.arn_format, var.s3_buckets), formatlist("%s:s3:::%s/*", local.arn_format, var.s3_buckets))
+    resources = concat(
+      formatlist("%s:s3:::%s", local.arn_format, local.s3_bucket_names_to_authorize),
+      formatlist("%s:s3:::%s/*", local.arn_format, local.s3_bucket_names_to_authorize)
+    )
   }
 
   dynamic "statement" {
@@ -165,18 +182,20 @@ data "aws_iam_policy_document" "s3_log_bucket" {
 }
 
 resource "aws_iam_policy" "lambda_forwarder_log_s3" {
-  count       = local.s3_logs_enabled ? 1 : 0
+  count = local.s3_logs_enabled ? 1 : 0
+
   name        = module.forwarder_log_s3_label.id
   path        = var.forwarder_iam_path
   description = "Allow Datadog Lambda Logs Forwarder to access S3 buckets"
-  policy      = join("", data.aws_iam_policy_document.s3_log_bucket.*.json)
+  policy      = join("", data.aws_iam_policy_document.s3_log_bucket[*].json)
   tags        = module.forwarder_log_s3_label.tags
 }
 
 resource "aws_iam_role_policy_attachment" "datadog_s3" {
-  count      = local.s3_logs_enabled ? 1 : 0
-  role       = join("", aws_iam_role.lambda_forwarder_log.*.name)
-  policy_arn = join("", aws_iam_policy.lambda_forwarder_log_s3.*.arn)
+  count = local.s3_logs_enabled ? 1 : 0
+
+  role       = join("", aws_iam_role.lambda_forwarder_log[*].name)
+  policy_arn = join("", aws_iam_policy.lambda_forwarder_log_s3[*].arn)
 }
 
 # Lambda Forwarder logs
@@ -209,4 +228,29 @@ resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_log_subscription_f
   log_group_name  = each.value.name
   destination_arn = aws_lambda_function.forwarder_log[0].arn
   filter_pattern  = each.value.filter_pattern
+}
+
+resource "aws_lambda_permission" "allow_eventbridge" {
+  for_each = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_event_patterns : {}
+
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.forwarder_log[0].function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = module.cloudwatch_event[each.key].aws_cloudwatch_event_rule_arn
+}
+
+module "cloudwatch_event" {
+  source  = "cloudposse/cloudwatch-events/aws"
+  version = "0.6.1"
+
+  for_each = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_event_patterns : {}
+
+  name    = each.key
+  context = module.forwarder_log_label.context
+
+  cloudwatch_event_rule_description = "${each.key} events forwarded to Datadog"
+
+  # Any optional attributes that are not set will equal null, and CloudWatch doesn't like that.
+  cloudwatch_event_rule_pattern = { for k, v in each.value : k => v if v != null }
+  cloudwatch_event_target_arn   = aws_lambda_function.forwarder_log[0].arn
 }
