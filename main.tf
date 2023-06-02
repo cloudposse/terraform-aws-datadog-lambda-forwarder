@@ -75,7 +75,7 @@ data "aws_iam_policy_document" "assume_role" {
 resource "aws_iam_policy" "datadog_custom_policy" {
   count = local.lambda_enabled && length(var.lambda_policy_source_json) > 0 ? 1 : 0
 
-  name   = "DatadogForwarderCustomPolicy"
+  name   = var.lambda_custom_policy_name
   policy = var.lambda_policy_source_json
 
   tags = module.this.tags
