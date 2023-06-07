@@ -111,4 +111,23 @@ data "aws_iam_policy_document" "lambda_default" {
 
     resources = [local.dd_api_key_arn]
   }
+
+  dynamic "statement" {
+    for_each = try(length(var.subnet_ids), 0) > 0 ? [true] : []
+    content {
+      sid = "AllowManageENI"
+
+      effect = "Allow"
+
+      actions = [
+        "ec2:CreateNetworkInterface",
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:DeleteNetworkInterface",
+        "ec2:AssignPrivateIpAddresses",
+        "ec2:UnassignPrivateIpAddresses",
+      ]
+
+      resources = ["*"]
+    }
+  }
 }
