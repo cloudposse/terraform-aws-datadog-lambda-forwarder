@@ -113,7 +113,7 @@ data "aws_iam_policy_document" "lambda_default" {
   }
 
   dynamic "statement" {
-    for_each = try(length(var.subnet_ids), 0) > 0 ? [true] : []
+    for_each = try(length(var.subnet_ids), 0) > 0 && try(length(var.security_group_ids), 0) > 0 ? [true] : []
     content {
       sid = "AllowManageENI"
 
