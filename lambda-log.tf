@@ -221,17 +221,11 @@ resource "aws_lambda_permission" "cloudwatch_groups" {
   source_arn    = "${local.arn_format}:logs:${local.aws_region}:${local.aws_account_id}:log-group:${each.value.name}:*"
 }
 
-data "aws_cloudwatch_log_group" "cloudwatch_log_group" {
-  for_each = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_log_groups : {}
-
-  name = each.value.name
-}
-
 resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_log_subscription_filter" {
   for_each = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_log_groups : {}
 
   name            = module.forwarder_log_label.id
-  log_group_name  = data.aws_cloudwatch_log_group.cloudwatch_log_group[each.key].name
+  log_group_name  = each.value.name
   destination_arn = aws_lambda_function.forwarder_log[0].arn
   filter_pattern  = each.value.filter_pattern
 }
