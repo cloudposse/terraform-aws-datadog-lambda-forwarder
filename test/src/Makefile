@@ -1,9 +1,8 @@
-export TF_CLI_ARGS_init ?= -get-plugins=true
-export TERRAFORM_VERSION ?= $(shell curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version' | cut -d. -f1-2)
+export TERRAFORM_VERSION ?= $(shell curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version' | cut -d. -f1)
 
 .DEFAULT_GOAL : all
-.PHONY: all
 
+.PHONY: all
 ## Default target
 all: test
 
@@ -15,8 +14,6 @@ init:
 .PHONY : test
 ## Run tests
 test: init
-	# This project runs `git` externally, so it needs extra permissions when run by a GitHub Action
-	[[ -n "$$GITHUB_WORKSPACE" ]] && git config --global --add safe.directory "$$GITHUB_WORKSPACE" || true
 	go mod download
 	go test -v -timeout 30m
 
