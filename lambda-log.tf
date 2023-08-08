@@ -55,6 +55,9 @@ resource "aws_iam_role" "lambda_forwarder_log" {
   assume_role_policy   = data.aws_iam_policy_document.assume_role[0].json
   permissions_boundary = var.log_permissions_boundary
   tags                 = module.forwarder_log_label.tags
+
+  # AWS will create the log group if needed. Make sure we create it first.
+  depends_on = [aws_cloudwatch_log_group.forwarder_vpclogs]
 }
 
 resource "aws_iam_policy" "lambda_forwarder_log" {
@@ -111,6 +114,9 @@ resource "aws_lambda_function" "forwarder_log" {
   }
 
   tags = module.forwarder_log_label.tags
+
+  # AWS will create the log group if needed. Make sure we create it first.
+  depends_on = [aws_cloudwatch_log_group.forwarder_vpclogs]
 }
 
 resource "aws_lambda_permission" "allow_s3_bucket" {
@@ -202,7 +208,7 @@ resource "aws_iam_role_policy_attachment" "datadog_s3" {
 resource "aws_cloudwatch_log_group" "forwarder_log" {
   count = local.lambda_enabled && var.forwarder_log_enabled ? 1 : 0
 
-  name              = "/aws/lambda/${aws_lambda_function.forwarder_log[0].function_name}"
+  name              = "/aws/lambda/${module.forwarder_log_label.id}"
   retention_in_days = var.forwarder_log_retention_days
 
   kms_key_id = var.kms_key_id

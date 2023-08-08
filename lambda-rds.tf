@@ -50,6 +50,9 @@ resource "aws_iam_role" "lambda_forwarder_rds" {
   assume_role_policy   = data.aws_iam_policy_document.assume_role[0].json
   permissions_boundary = var.rds_permissions_boundary
   tags                 = module.forwarder_rds_label.tags
+
+  # AWS will create the log group if needed. Make sure we create it first.
+  depends_on = [aws_cloudwatch_log_group.forwarder_vpclogs]
 }
 
 resource "aws_iam_policy" "lambda_forwarder_rds" {
@@ -106,6 +109,9 @@ resource "aws_lambda_function" "forwarder_rds" {
   }
 
   tags = module.forwarder_rds_label.tags
+
+  # AWS will create the log group if needed. Make sure we create it first.
+  depends_on = [aws_cloudwatch_log_group.forwarder_vpclogs]
 }
 
 resource "aws_lambda_permission" "cloudwatch_enhanced_rds_monitoring" {
@@ -130,7 +136,7 @@ resource "aws_cloudwatch_log_subscription_filter" "datadog_log_subscription_filt
 resource "aws_cloudwatch_log_group" "forwarder_rds" {
   count = local.lambda_enabled && var.forwarder_rds_enabled ? 1 : 0
 
-  name              = "/aws/lambda/${aws_lambda_function.forwarder_rds[0].function_name}"
+  name              = "/aws/lambda/${module.forwarder_rds_label.id}"
   retention_in_days = var.forwarder_log_retention_days
   kms_key_id        = var.kms_key_id
 
