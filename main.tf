@@ -32,8 +32,7 @@ locals {
   # If map is supplied, merge map with context, or use only context
   # Convert map to dd tags equivalent
   dd_tags = length(var.dd_tags_map) > 0 ? [
-    for tagk, tagv in var.dd_tags_map :
-    tagv != null ? format("%s:%s", tagk, tagv) : tagk
+    for tagk, tagv in var.dd_tags_map : (tagv != null ? format("%s:%s", tagk, tagv) : tagk)
   ] : var.dd_tags
   dd_tags_env = { DD_TAGS = join(",", local.dd_tags) }
 

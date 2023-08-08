@@ -1,32 +1,48 @@
 package test
 
 import (
+	"os/exec"
 	"regexp"
 	"strings"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
-	testStructure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/util/runtime"
 )
 
 // Test the Terraform module in examples/complete using Terratest.
 func TestExamplesComplete(t *testing.T) {
-	t.Parallel()
+	// This module needs to be run inside a Git Repository, so we cannot run it in parallel
+	// t.Parallel()
+
+	// If running on a GitHub Action Runner, invoke the necessary blessing
+	cmd := exec.Command("bash", "-c", "if [[ -d /__w/actions/actions ]]; then git config --global --add safe.directory /__w/actions/actions; fi")
+	var stdout strings.Builder
+	cmd.Stdout = &stdout
+	var stderr strings.Builder
+	cmd.Stderr = &stderr
+
+	if err := cmd.Run(); err != nil {
+		t.Logf("Running command: %s", cmd.String())
+		t.Logf("command stdout: %s", stdout.String())
+		t.Logf("command stderr: %s", stderr.String())
+		t.Log(err)
+	} else if stdout.Len() > 0 || stderr.Len() > 0 {
+		t.Logf("Running command: %s", cmd.String())
+		t.Logf("command stdout: %s", stdout.String())
+		t.Logf("command stderr: %s", stderr.String())
+	}
+
 	randID := strings.ToLower(random.UniqueId())
 	attributes := []string{randID}
 
-	rootFolder := "../../"
-	terraformFolderRelativeToRoot := "examples/complete"
 	varFiles := []string{"fixtures.us-east-2.tfvars"}
-
-	tempTestFolder := testStructure.CopyTerraformFolderToTemp(t, rootFolder, terraformFolderRelativeToRoot)
 
 	terraformOptions := &terraform.Options{
 		// The path to where our Terraform code is located
-		TerraformDir: tempTestFolder,
+		TerraformDir: "../../examples/complete",
 		Upgrade:      true,
 		// Variables to pass to our Terraform code using -var-file options
 		VarFiles: varFiles,
@@ -36,11 +52,11 @@ func TestExamplesComplete(t *testing.T) {
 	}
 
 	// At the end of the test, run `terraform destroy` to clean up any resources that were created
-	defer cleanup(t, terraformOptions, tempTestFolder)
+	defer terraform.Destroy(t, terraformOptions)
 
 	// If Go runtime crushes, run `terraform destroy` to clean up any resources that were created
 	defer runtime.HandleCrash(func(i interface{}) {
-		cleanup(t, terraformOptions, tempTestFolder)
+		defer terraform.Destroy(t, terraformOptions)
 	})
 
 	// This will run `terraform init` and `terraform apply` and fail the test if there are any errors
@@ -51,19 +67,17 @@ func TestExamplesComplete(t *testing.T) {
 }
 
 func TestExamplesCompleteDisabled(t *testing.T) {
-	t.Parallel()
+	// This module needs to be run inside a Git Repository, so we cannot run it in parallel
+	// t.Parallel()
+
 	randID := strings.ToLower(random.UniqueId())
 	attributes := []string{randID}
 
-	rootFolder := "../../"
-	terraformFolderRelativeToRoot := "examples/complete"
 	varFiles := []string{"fixtures.us-east-2.tfvars"}
-
-	tempTestFolder := testStructure.CopyTerraformFolderToTemp(t, rootFolder, terraformFolderRelativeToRoot)
 
 	terraformOptions := &terraform.Options{
 		// The path to where our Terraform code is located
-		TerraformDir: tempTestFolder,
+		TerraformDir: "../../examples/complete",
 		Upgrade:      true,
 		// Variables to pass to our Terraform code using -var-file options
 		VarFiles: varFiles,
@@ -74,7 +88,12 @@ func TestExamplesCompleteDisabled(t *testing.T) {
 	}
 
 	// At the end of the test, run `terraform destroy` to clean up any resources that were created
-	defer cleanup(t, terraformOptions, tempTestFolder)
+	defer terraform.Destroy(t, terraformOptions)
+
+	// If Go runtime crushes, run `terraform destroy` to clean up any resources that were created
+	defer runtime.HandleCrash(func(i interface{}) {
+		defer terraform.Destroy(t, terraformOptions)
+	})
 
 	// This will run `terraform init` and `terraform apply` and fail the test if there are any errors
 	results := terraform.InitAndApply(t, terraformOptions)

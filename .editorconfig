@@ -11,6 +11,10 @@ trim_trailing_whitespace = true
 indent_size = 2
 indent_style = space
 
+[*.go]
+indent_size = 2
+indent_style = tab
+
 [*.md]
 max_line_length = 0
 trim_trailing_whitespace = false
