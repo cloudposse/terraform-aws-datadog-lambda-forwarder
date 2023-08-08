@@ -52,7 +52,7 @@ resource "aws_iam_role" "lambda_forwarder_rds" {
   tags                 = module.forwarder_rds_label.tags
 
   # AWS will create the log group if needed. Make sure we create it first.
-  depends_on = [aws_cloudwatch_log_group.forwarder_vpclogs]
+  depends_on = [aws_cloudwatch_log_group.forwarder_rds]
 }
 
 resource "aws_iam_policy" "lambda_forwarder_rds" {
@@ -111,7 +111,7 @@ resource "aws_lambda_function" "forwarder_rds" {
   tags = module.forwarder_rds_label.tags
 
   # AWS will create the log group if needed. Make sure we create it first.
-  depends_on = [aws_cloudwatch_log_group.forwarder_vpclogs]
+  depends_on = [aws_cloudwatch_log_group.forwarder_rds]
 }
 
 resource "aws_lambda_permission" "cloudwatch_enhanced_rds_monitoring" {

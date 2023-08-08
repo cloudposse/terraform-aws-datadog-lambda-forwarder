@@ -57,7 +57,7 @@ resource "aws_iam_role" "lambda_forwarder_log" {
   tags                 = module.forwarder_log_label.tags
 
   # AWS will create the log group if needed. Make sure we create it first.
-  depends_on = [aws_cloudwatch_log_group.forwarder_vpclogs]
+  depends_on = [aws_cloudwatch_log_group.forwarder_log]
 }
 
 resource "aws_iam_policy" "lambda_forwarder_log" {
@@ -116,7 +116,7 @@ resource "aws_lambda_function" "forwarder_log" {
   tags = module.forwarder_log_label.tags
 
   # AWS will create the log group if needed. Make sure we create it first.
-  depends_on = [aws_cloudwatch_log_group.forwarder_vpclogs]
+  depends_on = [aws_cloudwatch_log_group.forwarder_log]
 }
 
 resource "aws_lambda_permission" "allow_s3_bucket" {
