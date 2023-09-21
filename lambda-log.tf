@@ -122,7 +122,6 @@ resource "aws_lambda_function" "forwarder_log" {
 resource "aws_lambda_permission" "allow_s3_bucket" {
   for_each = local.s3_logs_enabled ? local.s3_bucket_names_to_authorize : []
 
-  statement_id  = "AllowS3ToInvokeLambda-${each.value}"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.forwarder_log[0].arn
   principal     = "s3.amazonaws.com"
