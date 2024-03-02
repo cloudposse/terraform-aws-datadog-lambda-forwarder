@@ -246,7 +246,7 @@ resource "aws_lambda_permission" "allow_eventbridge" {
 
 module "cloudwatch_event" {
   source  = "cloudposse/cloudwatch-events/aws"
-  version = "0.6.1"
+  version = "0.8.0"
 
   for_each = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_event_patterns : {}
 
