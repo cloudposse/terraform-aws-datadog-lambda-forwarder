@@ -203,6 +203,12 @@ variable "lambda_policy_source_json" {
   default     = ""
 }
 
+variable "lambda_custom_policy_name" {
+  type        = string
+  description = "Additional IAM policy document that can optionally be passed and merged with the created policy document"
+  default     = "DatadogForwarderCustomPolicy"
+}
+
 variable "forwarder_iam_path" {
   type        = string
   description = "Path to the IAM roles and policies created"

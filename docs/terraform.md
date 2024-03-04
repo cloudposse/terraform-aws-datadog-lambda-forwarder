@@ -19,12 +19,12 @@
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_cloudwatch_event"></a> [cloudwatch\_event](#module\_cloudwatch\_event) | cloudposse/cloudwatch-events/aws | 0.6.1 |
-| <a name="module_forwarder_log_artifact"></a> [forwarder\_log\_artifact](#module\_forwarder\_log\_artifact) | cloudposse/module-artifact/external | 0.7.2 |
+| <a name="module_forwarder_log_artifact"></a> [forwarder\_log\_artifact](#module\_forwarder\_log\_artifact) | cloudposse/module-artifact/external | 0.8.0 |
 | <a name="module_forwarder_log_label"></a> [forwarder\_log\_label](#module\_forwarder\_log\_label) | cloudposse/label/null | 0.25.0 |
 | <a name="module_forwarder_log_s3_label"></a> [forwarder\_log\_s3\_label](#module\_forwarder\_log\_s3\_label) | cloudposse/label/null | 0.25.0 |
-| <a name="module_forwarder_rds_artifact"></a> [forwarder\_rds\_artifact](#module\_forwarder\_rds\_artifact) | cloudposse/module-artifact/external | 0.7.2 |
+| <a name="module_forwarder_rds_artifact"></a> [forwarder\_rds\_artifact](#module\_forwarder\_rds\_artifact) | cloudposse/module-artifact/external | 0.8.0 |
 | <a name="module_forwarder_rds_label"></a> [forwarder\_rds\_label](#module\_forwarder\_rds\_label) | cloudposse/label/null | 0.25.0 |
-| <a name="module_forwarder_vpclogs_artifact"></a> [forwarder\_vpclogs\_artifact](#module\_forwarder\_vpclogs\_artifact) | cloudposse/module-artifact/external | 0.7.2 |
+| <a name="module_forwarder_vpclogs_artifact"></a> [forwarder\_vpclogs\_artifact](#module\_forwarder\_vpclogs\_artifact) | cloudposse/module-artifact/external | 0.8.0 |
 | <a name="module_forwarder_vpclogs_label"></a> [forwarder\_vpclogs\_label](#module\_forwarder\_vpclogs\_label) | cloudposse/label/null | 0.25.0 |
 | <a name="module_this"></a> [this](#module\_this) | cloudposse/label/null | 0.25.0 |
 
@@ -113,6 +113,7 @@
 | <a name="input_label_order"></a> [label\_order](#input\_label\_order) | The order in which the labels (ID elements) appear in the `id`.<br>Defaults to ["namespace", "environment", "stage", "name", "attributes"].<br>You can omit any of the 6 labels ("tenant" is the 6th), but at least one must be present. | `list(string)` | `null` | no |
 | <a name="input_label_value_case"></a> [label\_value\_case](#input\_label\_value\_case) | Controls the letter case of ID elements (labels) as included in `id`,<br>set as tag values, and output by this module individually.<br>Does not affect values of tags passed in via the `tags` input.<br>Possible values: `lower`, `title`, `upper` and `none` (no transformation).<br>Set this to `title` and set `delimiter` to `""` to yield Pascal Case IDs.<br>Default value: `lower`. | `string` | `null` | no |
 | <a name="input_labels_as_tags"></a> [labels\_as\_tags](#input\_labels\_as\_tags) | Set of labels (ID elements) to include as tags in the `tags` output.<br>Default is to include all labels.<br>Tags with empty values will not be included in the `tags` output.<br>Set to `[]` to suppress all generated tags.<br>**Notes:**<br>  The value of the `name` tag, if included, will be the `id`, not the `name`.<br>  Unlike other `null-label` inputs, the initial setting of `labels_as_tags` cannot be<br>  changed in later chained modules. Attempts to change it will be silently ignored. | `set(string)` | <pre>[<br>  "default"<br>]</pre> | no |
+| <a name="input_lambda_custom_policy_name"></a> [lambda\_custom\_policy\_name](#input\_lambda\_custom\_policy\_name) | Additional IAM policy document that can optionally be passed and merged with the created policy document | `string` | `"DatadogForwarderCustomPolicy"` | no |
 | <a name="input_lambda_memory_size"></a> [lambda\_memory\_size](#input\_lambda\_memory\_size) | Amount of memory in MB your Lambda Function can use at runtime | `number` | `128` | no |
 | <a name="input_lambda_policy_source_json"></a> [lambda\_policy\_source\_json](#input\_lambda\_policy\_source\_json) | Additional IAM policy document that can optionally be passed and merged with the created policy document | `string` | `""` | no |
 | <a name="input_lambda_reserved_concurrent_executions"></a> [lambda\_reserved\_concurrent\_executions](#input\_lambda\_reserved\_concurrent\_executions) | Amount of reserved concurrent executions for the lambda function. A value of 0 disables Lambda from being triggered and -1 removes any concurrency limitations. Defaults to Unreserved Concurrency Limits -1 | `number` | `-1` | no |
