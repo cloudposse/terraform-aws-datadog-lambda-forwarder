@@ -1,0 +1,7 @@
+# Upstream changes from _extends are only recognized when modifications are made to this file in the default branch.
+_extends: .github
+repository:
+  name: terraform-aws-datadog-lambda-forwarder
+  description: Terraform module to provision all the necessary infrastructure to deploy Datadog Lambda forwarders
+  homepage: https://cloudposse.com/accelerate
+  topics: aws, aws-lambda, datadog, forwarder, terraform, terraform-module
