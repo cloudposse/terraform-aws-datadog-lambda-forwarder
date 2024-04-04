@@ -79,8 +79,8 @@ variable "dd_api_key_source" {
 
   # Check SSM name format
   validation {
-    condition     = var.dd_api_key_source.resource == "ssm" ? can(regex("^[a-zA-Z0-9_./-]+$", var.dd_api_key_source.identifier)) : true
-    error_message = "Name for SSM parameter does not appear to be valid format, acceptable characters are `a-zA-Z0-9_.-` and `/` to delineate hierarchies."
+    condition     = var.dd_api_key_source.resource == "ssm" ? can(regex("^[a-zA-Z0-9_./-]+$", var.dd_api_key_source.identifier)) || can(regex("^arn:[^:]*:ssm:[^:]*:[^:]*:parameter/[a-zA-Z0-9_./-]+$", var.dd_api_key_source.identifier)) : true
+    error_message = "API key source identifier must either be full arn or name of SSM parameter. Acceptable characters for name are `a-zA-Z0-9_.-` and `/` to delineate hierarchies."
   }
 }
 
