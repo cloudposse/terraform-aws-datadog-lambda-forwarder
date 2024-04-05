@@ -32,7 +32,7 @@ variable "datadog_forwarder_lambda_environment_variables" {
 variable "lambda_runtime" {
   type        = string
   description = "Runtime environment for Datadog Lambda"
-  default     = "python3.12"
+  default     = "python3.11"
 }
 
 variable "lambda_timeout" {
