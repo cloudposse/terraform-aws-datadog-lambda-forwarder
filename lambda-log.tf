@@ -184,6 +184,24 @@ data "aws_iam_policy_document" "s3_log_bucket" {
       resources = var.s3_bucket_kms_arns
     }
   }
+
+  dynamic "statement" {
+    for_each = var.forwarder_use_cache_bucket ? [true] : []
+    content {
+      effect = "Allow"
+
+      actions = [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:ListObject",
+        "s3:DeleteObject",
+      ]
+      resources = [
+        one(module.tags_cache_s3_bucket[*].bucket_arn),
+        "${one(module.tags_cache_s3_bucket[*].bucket_arn)}/*"
+      ]
+    }
+  }
 }
 
 resource "aws_iam_policy" "lambda_forwarder_log_s3" {
@@ -260,7 +278,6 @@ module "cloudwatch_event" {
   cloudwatch_event_target_arn   = aws_lambda_function.forwarder_log[0].arn
 }
 
-//trunk-ignore(checkov/CKV_TF_1)
 module "tags_cache_s3_bucket" {
   # Bucket for storing lambda tags cache and logs which failed to post. https://docs.datadoghq.com/logs/guide/forwarder/?tab=cloudformation#upgrade-an-older-version-to-31060
   source  = "cloudposse/s3-bucket/aws"
@@ -270,6 +287,4 @@ module "tags_cache_s3_bucket" {
 
   name    = "${module.forwarder_log_label.id}-cache"
   context = module.forwarder_log_label.context
-
-
 }

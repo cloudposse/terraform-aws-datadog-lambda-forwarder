@@ -36,7 +36,7 @@ locals {
   ] : var.dd_tags
   dd_tags_env = { DD_TAGS = join(",", local.dd_tags) }
 
-  cache_bucket_env = var.forwarder_use_cache_bucket ? { DD_S3_BUCKET_NAME = module.tags_cache_s3_bucket.name } : {}
+  cache_bucket_env = var.forwarder_use_cache_bucket ? { DD_S3_BUCKET_NAME = one(module.tags_cache_s3_bucket[*].bucket_id), DD_STORE_FAILED_EVENTS = true } : {}
 
   lambda_debug = var.forwarder_lambda_debug_enabled ? { DD_LOG_LEVEL = "debug" } : {}
   lambda_env   = merge(local.dd_api_key_kms, local.dd_api_key_asm, local.dd_api_key_ssm, local.dd_site, local.lambda_debug, local.dd_tags_env, local.cache_bucket_env, var.datadog_forwarder_lambda_environment_variables)
