@@ -259,3 +259,17 @@ module "cloudwatch_event" {
   cloudwatch_event_rule_pattern = { for k, v in each.value : k => v if v != null }
   cloudwatch_event_target_arn   = aws_lambda_function.forwarder_log[0].arn
 }
+
+//trunk-ignore(checkov/CKV_TF_1)
+module "tags_cache_s3_bucket" {
+  # Bucket for storing lambda tags cache and logs which failed to post. https://docs.datadoghq.com/logs/guide/forwarder/?tab=cloudformation#upgrade-an-older-version-to-31060
+  source  = "cloudposse/s3-bucket/aws"
+  version = "4.2.0"
+
+  count = local.lambda_enabled && var.forwarder_use_cache_bucket ? 1 : 0
+
+  name    = "${module.forwarder_log_label.id}-cache"
+  context = module.forwarder_log_label.context
+
+
+}
