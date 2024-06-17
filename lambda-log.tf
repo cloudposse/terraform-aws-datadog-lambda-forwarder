@@ -285,6 +285,7 @@ module "tags_cache_s3_bucket" {
 
   count = local.lambda_enabled && var.forwarder_use_cache_bucket ? 1 : 0
 
-  name    = "${module.forwarder_log_label.id}-cache"
+  attributes = concat(module.forwarder_log_label.attributes, ["cache"])
+
   context = module.forwarder_log_label.context
 }
