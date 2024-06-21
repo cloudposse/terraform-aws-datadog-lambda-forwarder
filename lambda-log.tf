@@ -215,6 +215,15 @@ resource "aws_cloudwatch_log_group" "forwarder_log" {
   tags = module.forwarder_log_label.tags
 }
 
+resource "aws_cloudwatch_log_group" "cloudwatch_log_group" {
+  for_each = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_log_groups : {}
+
+  name              = each.value.name
+  retention_in_days = var.forwarder_log_retention_days
+
+  tags = module.forwarder_log_label.tags
+}
+
 # CloudWatch Log Groups
 resource "aws_lambda_permission" "cloudwatch_groups" {
   for_each = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_log_groups : {}
