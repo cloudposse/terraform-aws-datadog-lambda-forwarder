@@ -167,6 +167,12 @@ variable "cloudwatch_forwarder_log_groups" {
   default     = {}
 }
 
+variable "cloudwatch_create_log_groups_enabled" {
+  type        = bool
+  description = "Whether to create the CloudWatch Log Groups that are being forwarded to Datadog"
+  default     = false
+}
+
 variable "forwarder_lambda_debug_enabled" {
   type        = bool
   description = "Whether to enable or disable debug for the Lambda forwarder"

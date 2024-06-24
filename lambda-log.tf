@@ -216,7 +216,7 @@ resource "aws_cloudwatch_log_group" "forwarder_log" {
 }
 
 resource "aws_cloudwatch_log_group" "cloudwatch_log_group" {
-  for_each = local.lambda_enabled && var.forwarder_log_enabled ? var.cloudwatch_forwarder_log_groups : {}
+  for_each = local.lambda_enabled && var.forwarder_log_enabled && var.cloudwatch_create_log_groups_enabled ? var.cloudwatch_forwarder_log_groups : {}
 
   name              = each.value.name
   retention_in_days = var.forwarder_log_retention_days
@@ -242,7 +242,7 @@ resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_log_subscription_f
   log_group_name  = each.value.name
   destination_arn = aws_lambda_function.forwarder_log[0].arn
   filter_pattern  = each.value.filter_pattern
-  depends_on = [ aws_cloudwatch_log_group.cloudwatch_log_group ]
+  depends_on      = [ aws_cloudwatch_log_group.cloudwatch_log_group ]
 }
 
 resource "aws_lambda_permission" "allow_eventbridge" {
