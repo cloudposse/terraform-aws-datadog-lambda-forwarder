@@ -242,6 +242,7 @@ resource "aws_cloudwatch_log_subscription_filter" "cloudwatch_log_subscription_f
   log_group_name  = each.value.name
   destination_arn = aws_lambda_function.forwarder_log[0].arn
   filter_pattern  = each.value.filter_pattern
+  depends_on = [ aws_cloudwatch_log_group.cloudwatch_log_group ]
 }
 
 resource "aws_lambda_permission" "allow_eventbridge" {
