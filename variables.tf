@@ -105,7 +105,7 @@ variable "dd_module_name" {
 variable "dd_forwarder_version" {
   type        = string
   description = "Version tag of Datadog lambdas to use. https://github.com/DataDog/datadog-serverless-functions/releases"
-  default     = "3.39.0"
+  default     = "3.116.0"
 }
 
 variable "forwarder_log_enabled" {
@@ -327,4 +327,10 @@ variable "cloudwatch_forwarder_event_patterns" {
     ```
   EOF
   default     = {}
+}
+
+variable "forwarder_use_cache_bucket" {
+  type        = bool
+  description = "Flag to enable or disable the cache bucket for lambda tags and failed events. See https://docs.datadoghq.com/logs/guide/forwarder/?tab=cloudformation#upgrade-an-older-version-to-31060. Recommended for forwarder versions 3.106 and higher."
+  default     = true
 }
