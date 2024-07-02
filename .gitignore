@@ -17,6 +17,3 @@
 # Crash log files
 crash.log
 test.log
-
-# Downloaded lambda artifact
-forwarder-log.zip
