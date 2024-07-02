@@ -191,6 +191,7 @@ Available targets:
 | <a name="module_forwarder_rds_label"></a> [forwarder\_rds\_label](#module\_forwarder\_rds\_label) | cloudposse/label/null | 0.25.0 |
 | <a name="module_forwarder_vpclogs_artifact"></a> [forwarder\_vpclogs\_artifact](#module\_forwarder\_vpclogs\_artifact) | cloudposse/module-artifact/external | 0.8.0 |
 | <a name="module_forwarder_vpclogs_label"></a> [forwarder\_vpclogs\_label](#module\_forwarder\_vpclogs\_label) | cloudposse/label/null | 0.25.0 |
+| <a name="module_tags_cache_s3_bucket"></a> [tags\_cache\_s3\_bucket](#module\_tags\_cache\_s3\_bucket) | cloudposse/s3-bucket/aws | 4.2.0 |
 | <a name="module_this"></a> [this](#module\_this) | cloudposse/label/null | 0.25.0 |
 
 ## Resources
@@ -249,7 +250,7 @@ Available targets:
 | <a name="input_dd_api_key_kms_ciphertext_blob"></a> [dd\_api\_key\_kms\_ciphertext\_blob](#input\_dd\_api\_key\_kms\_ciphertext\_blob) | CiphertextBlob stored in environment variable DD\_KMS\_API\_KEY used by the lambda function, along with the KMS key, to decrypt Datadog API key | `string` | `""` | no |
 | <a name="input_dd_api_key_source"></a> [dd\_api\_key\_source](#input\_dd\_api\_key\_source) | One of: ARN for AWS Secrets Manager (asm) to retrieve the Datadog (DD) api key, ARN for the KMS (kms) key used to decrypt the ciphertext\_blob of the api key, or the name of the SSM (ssm) parameter used to retrieve the Datadog API key | <pre>object({<br>    resource   = string<br>    identifier = string<br>  })</pre> | <pre>{<br>  "identifier": "",<br>  "resource": ""<br>}</pre> | no |
 | <a name="input_dd_artifact_filename"></a> [dd\_artifact\_filename](#input\_dd\_artifact\_filename) | The Datadog artifact filename minus extension | `string` | `"aws-dd-forwarder"` | no |
-| <a name="input_dd_forwarder_version"></a> [dd\_forwarder\_version](#input\_dd\_forwarder\_version) | Version tag of Datadog lambdas to use. https://github.com/DataDog/datadog-serverless-functions/releases | `string` | `"3.39.0"` | no |
+| <a name="input_dd_forwarder_version"></a> [dd\_forwarder\_version](#input\_dd\_forwarder\_version) | Version tag of Datadog lambdas to use. https://github.com/DataDog/datadog-serverless-functions/releases | `string` | `"3.116.0"` | no |
 | <a name="input_dd_module_name"></a> [dd\_module\_name](#input\_dd\_module\_name) | The Datadog GitHub repository name | `string` | `"datadog-serverless-functions"` | no |
 | <a name="input_dd_tags"></a> [dd\_tags](#input\_dd\_tags) | A list of Datadog tags to apply to all logs forwarded to Datadog | `list(string)` | `[]` | no |
 | <a name="input_dd_tags_map"></a> [dd\_tags\_map](#input\_dd\_tags\_map) | A map of Datadog tags to apply to all logs forwarded to Datadog. This will override dd\_tags. | `map(string)` | `{}` | no |
@@ -268,6 +269,7 @@ Available targets:
 | <a name="input_forwarder_rds_enabled"></a> [forwarder\_rds\_enabled](#input\_forwarder\_rds\_enabled) | Flag to enable or disable Datadog RDS enhanced monitoring forwarder | `bool` | `false` | no |
 | <a name="input_forwarder_rds_filter_pattern"></a> [forwarder\_rds\_filter\_pattern](#input\_forwarder\_rds\_filter\_pattern) | Filter pattern for Lambda forwarder RDS | `string` | `""` | no |
 | <a name="input_forwarder_rds_layers"></a> [forwarder\_rds\_layers](#input\_forwarder\_rds\_layers) | List of Lambda Layer Version ARNs (maximum of 5) to attach to Datadog RDS enhanced monitoring lambda function | `list(string)` | `[]` | no |
+| <a name="input_forwarder_use_cache_bucket"></a> [forwarder\_use\_cache\_bucket](#input\_forwarder\_use\_cache\_bucket) | Flag to enable or disable the cache bucket for lambda tags and failed events. See https://docs.datadoghq.com/logs/guide/forwarder/?tab=cloudformation#upgrade-an-older-version-to-31060. Recommended for forwarder versions 3.106 and higher. | `bool` | `true` | no |
 | <a name="input_forwarder_vpc_logs_artifact_url"></a> [forwarder\_vpc\_logs\_artifact\_url](#input\_forwarder\_vpc\_logs\_artifact\_url) | The URL for the code of the Datadog forwarder for VPC Logs. It can be a local file, url or git repo | `string` | `null` | no |
 | <a name="input_forwarder_vpc_logs_enabled"></a> [forwarder\_vpc\_logs\_enabled](#input\_forwarder\_vpc\_logs\_enabled) | Flag to enable or disable Datadog VPC flow log forwarder | `bool` | `false` | no |
 | <a name="input_forwarder_vpc_logs_layers"></a> [forwarder\_vpc\_logs\_layers](#input\_forwarder\_vpc\_logs\_layers) | List of Lambda Layer Version ARNs (maximum of 5) to attach to Datadog VPC flow log forwarder lambda function | `list(string)` | `[]` | no |
