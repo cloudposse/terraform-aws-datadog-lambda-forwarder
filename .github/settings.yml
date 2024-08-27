@@ -5,3 +5,4 @@ repository:
   description: Terraform module to provision all the necessary infrastructure to deploy Datadog Lambda forwarders
   homepage: https://cloudposse.com/accelerate
   topics: aws, aws-lambda, datadog, forwarder, terraform, terraform-module
+
