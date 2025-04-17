@@ -35,6 +35,12 @@ variable "lambda_runtime" {
   default     = "python3.11"
 }
 
+variable "lambda_architectures" {
+  type        = list(string)
+  description = "Instruction set architecture for your Lambda function. Valid values are [\"x86_64\"] and [\"arm64\"]."
+  default     = null
+}
+
 variable "lambda_timeout" {
   type        = number
   description = "Amount of time your Datadog Lambda Function has to run in seconds"

@@ -18,7 +18,7 @@ func TestExamplesComplete(t *testing.T) {
 	// t.Parallel()
 
 	// If running on a GitHub Action Runner, invoke the necessary blessing
-	cmd := exec.Command("bash", "-c", "if [[ -d /__w/actions/actions ]]; then git config --global --add safe.directory /__w/actions/actions; fi")
+	cmd := exec.Command("bash", "-c", "if [[ -d /__w/terraform-aws-datadog-lambda-forwarder/terraform-aws-datadog-lambda-forwarder ]]; then git config --global --add safe.directory /__w/terraform-aws-datadog-lambda-forwarder/terraform-aws-datadog-lambda-forwarder; fi")
 	var stdout strings.Builder
 	cmd.Stdout = &stdout
 	var stderr strings.Builder
