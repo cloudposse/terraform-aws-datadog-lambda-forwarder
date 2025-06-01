@@ -196,6 +196,7 @@ data "aws_iam_policy_document" "s3_log_bucket" {
         "s3:PutObject",
         "s3:ListObject",
         "s3:DeleteObject",
+        "s3:ListBucket",
       ]
       resources = [
         one(module.tags_cache_s3_bucket[*].bucket_arn),
