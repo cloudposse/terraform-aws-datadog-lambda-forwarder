@@ -174,6 +174,16 @@ data "aws_iam_policy_document" "s3_log_bucket" {
     )
   }
 
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "tag:GetResources",
+    ]
+
+    resources = ["*"]
+  }
+
   dynamic "statement" {
     for_each = try(length(var.s3_bucket_kms_arns), 0) > 0 ? [true] : []
     content {
