@@ -282,7 +282,7 @@ module "cloudwatch_event" {
 module "tags_cache_s3_bucket" {
   # Bucket for storing lambda tags cache and logs which failed to post. https://docs.datadoghq.com/logs/guide/forwarder/?tab=cloudformation#upgrade-an-older-version-to-31060
   source  = "cloudposse/s3-bucket/aws"
-  version = "4.2.0"
+  version = "4.10.0"
 
   count = local.lambda_enabled && var.forwarder_use_cache_bucket ? 1 : 0
 
