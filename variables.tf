@@ -340,3 +340,9 @@ variable "forwarder_use_cache_bucket" {
   description = "Flag to enable or disable the cache bucket for lambda tags and failed events. See https://docs.datadoghq.com/logs/guide/forwarder/?tab=cloudformation#upgrade-an-older-version-to-31060. Recommended for forwarder versions 3.106 and higher."
   default     = true
 }
+
+variable "s3_notification_events" {
+  type        = list(string)
+  description = "List of S3 events to trigger the Lambda notification"
+  default     = ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"]
+}
