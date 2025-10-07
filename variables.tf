@@ -344,5 +344,5 @@ variable "forwarder_use_cache_bucket" {
 variable "s3_notification_events" {
   type        = list(string)
   description = "List of S3 events to trigger the Lambda notification"
-  default     = ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"]
+  default     = ["s3:ObjectCreated:*"]
 }
