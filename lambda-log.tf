@@ -136,7 +136,7 @@ resource "aws_s3_bucket_notification" "s3_bucket_notification" {
 
   lambda_function {
     lambda_function_arn = aws_lambda_function.forwarder_log[0].arn
-    events              = ["s3:ObjectCreated:*"]
+    events              = var.s3_notification_events
   }
 
   depends_on = [aws_lambda_permission.allow_s3_bucket]
@@ -149,7 +149,7 @@ resource "aws_s3_bucket_notification" "s3_bucket_notification_with_prefixes" {
 
   lambda_function {
     lambda_function_arn = aws_lambda_function.forwarder_log[0].arn
-    events              = ["s3:ObjectCreated:*"]
+    events              = var.s3_notification_events
     filter_prefix       = each.value.bucket_prefix
   }
 
