@@ -302,6 +302,7 @@ Here is an example of using this module:
 | <a name="input_s3_bucket_kms_arns"></a> [s3\_bucket\_kms\_arns](#input\_s3\_bucket\_kms\_arns) | List of KMS key ARNs for s3 bucket encryption | `list(string)` | `[]` | no |
 | <a name="input_s3_buckets"></a> [s3\_buckets](#input\_s3\_buckets) | The names of S3 buckets to forward logs to Datadog | `list(string)` | `[]` | no |
 | <a name="input_s3_buckets_with_prefixes"></a> [s3\_buckets\_with\_prefixes](#input\_s3\_buckets\_with\_prefixes) | The names S3 buckets and prefix to forward logs to Datadog | `map(object({ bucket_name : string, bucket_prefix : string }))` | `{}` | no |
+| <a name="input_s3_notification_events"></a> [s3\_notification\_events](#input\_s3\_notification\_events) | List of S3 events to trigger the Lambda notification | `list(string)` | <pre>[<br/>  "s3:ObjectCreated:*"<br/>]</pre> | no |
 | <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | List of security group IDs to use when the Lambda Function runs in a VPC | `list(string)` | `null` | no |
 | <a name="input_stage"></a> [stage](#input\_stage) | ID element. Usually used to indicate role, e.g. 'prod', 'staging', 'source', 'build', 'test', 'deploy', 'release' | `string` | `null` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs to use when deploying the Lambda Function in a VPC | `list(string)` | `null` | no |
