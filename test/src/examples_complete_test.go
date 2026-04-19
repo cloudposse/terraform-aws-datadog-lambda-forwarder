@@ -63,7 +63,7 @@ func TestExamplesComplete(t *testing.T) {
 	terraform.InitAndApply(t, terraformOptions)
 
 	lambdaFunctionName := terraform.Output(t, terraformOptions, "lambda_forwarder_log_function_name")
-	assert.Equal(t, "eg-ue2-test-datadog-lambda-forwarder-"+randID+"-logs", lambdaFunctionName)
+	assert.Equal(t, "eg-someval-ue2-test-datadog-lambda-forwarder-"+randID+"-logs", lambdaFunctionName)
 }
 
 func TestExamplesCompleteDisabled(t *testing.T) {
